@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <link rel="shortcut icon" href="#" />
+  <link rel="stylesheet" type="text/css" href="{{pluginResources}}/ap/ap.css" />
+  <link rel="preload" href="{{pluginResources}}/common/font/tttgbnumber.ttf" as="font" />
+</head>
+
+<body id="container" class="body_box">
+  <div class="container">
+    <div class="head_box">
+      <div class="id_text">{{header}}</div>
+    </div>
+    {{each modelsGroup models idx}}
+    <div class="info_box">
+      <div class="pic" style="background-image: url({{models.img_path}});">
+        <div class="name">{{models.name}}</div>
+        <div class="value">
+          <span class="valueinfo">{{models.value}}</span>
+          {{if models.max != null}}
+          <span class="valuemax">/ {{models.max}}</span>
+          {{/if}}
+        </div>
+      </div>
+      <div class="info">{{models.info}}</div>
+    </div>
+    {{/each}}
+
+    <div class="data_box2" style="padding-top: 5px">
+      <p class="notice" style="padding-top: 5px">{{notice}}</p>
+    </div>
+    <div class="logo">Created By Yunzai-Bot & Arknights-Plugin</div>
+  </div>
+</body>
+
+</html>
