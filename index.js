@@ -8,7 +8,7 @@ logger.mark(
   logger.green(
     `[${
       catlist[Math.floor(Math.random() * catlist.length)]
-    }]Arknights-Plugin插件自检中......`
+    }]skland-plugin插件自检中......`
   )
 )
 logger.mark(
@@ -17,7 +17,7 @@ logger.mark(
   )
 )
 const files = fs
-  .readdirSync('./plugins/Arknights-plugin/apps')
+  .readdirSync('./plugins/skland-plugin/apps')
   .filter((file) => file.endsWith('.js'))
 let ret = []
 files.forEach((file) => {

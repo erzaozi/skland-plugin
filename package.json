@@ -1,5 +1,5 @@
 {
-  "name": "arknights-plugin",
+  "name": "skland-plugin",
   "version": "1.0.0",
   "description": "基于Yunzai-Bot的明日方舟插件，通过森空岛接口，查询明日方舟游戏信息",
   "main": "index.js",

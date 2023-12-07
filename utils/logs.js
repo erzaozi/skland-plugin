@@ -15,7 +15,7 @@ try {
  */
 class Log {
   constructor () {
-    this.header = `【Minecraft-Plugin v${currentVersion}】`
+    this.header = `【Skland-Plugin v${currentVersion}】`
   }
 
   /** 快捷执行logger.info( )  */

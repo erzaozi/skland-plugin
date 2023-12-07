@@ -28,7 +28,7 @@ export class update extends plugin {
                 }
             ]
         })
-        this.typeName = 'Arknights-plugin'
+        this.typeName = 'skland-plugin'
     }
 
     async update() {
@@ -38,7 +38,7 @@ export class update extends plugin {
             return
         }
         /** 获取插件 */
-        let plugin = 'Arknights-plugin'
+        let plugin = 'skland-plugin'
 
         /** 检查git安装 */
         if (!await this.checkGit()) return
@@ -205,7 +205,7 @@ export class update extends plugin {
     }
 
     async updateLog() {
-        let log = await this.getLog('Arknights-plugin')
+        let log = await this.getLog('skland-plugin')
         await this.reply(log)
     }
 
