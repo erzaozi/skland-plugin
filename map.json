@@ -1,0 +1,18 @@
+[
+  {
+    "userId": "user1",
+    "token": "token1",
+    "uid": [
+      "uid1",
+      "uid2"
+    ]
+  },
+  {
+    "userId": "user2",
+    "token": "token2",
+    "uid": [
+      "uid3",
+      "uid4"
+    ]
+  }
+]

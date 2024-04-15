@@ -32,11 +32,11 @@ class Skland {
 
     async getTimestamp() {
         let config = await Config.getConfig()
-        if (config.skland_use_web_timestamp) {
+        if (config['skland_use_web_timestamp']) {
             const response = await axios.get(CONSTANTS.BINDING_URL);
             return response.data.timestamp;
         } else {
-            return String(Math.floor(Date.now() / 1000) - config.skland_timestamp_delay);
+            return String(Math.floor(Date.now() / 1000) - config['skland_timestamp_delay']);
         }
     }
 
@@ -124,7 +124,7 @@ class Skland {
         const responseData = response.data;
         for (let i of responseData.data.list) {
             if (i.appCode === 'arknights') {
-                return i.bindingList;
+                return i['bindingList'];
             }
         }
 
@@ -142,9 +142,9 @@ class Skland {
         let drName, server;
         for (let i of bindingList) {
             if (i.uid === uid) {
-                data.gameId = i.channelMasterId;
-                drName = 'Dr.' + i.nickName;
-                server = i.channelName;
+                data.gameId = i['channelMasterId'];
+                drName = 'Dr.' + i['nickName'];
+                server = i['channelName'];
                 break;
             }
         }
@@ -157,12 +157,12 @@ class Skland {
             if (signResponse.code === 0) {
                 status = true;
                 text = `[${server}] ${drName} UID:${uid} 签到成功\n`;
-                let awards = signResponse.data?.awards || [];
+                let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
                     throw new Error(`未能获取奖励列表，${JSON.stringify(signResponse)}`);
                 }
                 for (let award of awards) {
-                    let resource = award.resource || {};
+                    let resource = award['resource'] || {};
                     text += `奖励ID：${resource.id}\n`;
                     text += `签到奖励：${resource.name} × ${award.count}\n`;
                     text += `类型：${resource.type} ${award.type || '<Err>'}\n`;
