@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
-import qs from 'qs';
 import Config from './Config.js'
 
 const CONSTANTS = {
@@ -10,6 +9,8 @@ const CONSTANTS = {
     BINDING_URL: "https://zonai.skland.com/api/v1/game/player/binding",
     GRANT_CODE_URL: "https://as.hypergryph.com/user/oauth2/v2/grant",
     CRED_CODE_URL: "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code",
+    USER_INFO_URL: "https://zonai.skland.com/api/v1/game/player/info",
+    CRED_CHECK_URL: "https://zonai.skland.com/api/v1/user/check",
     REQUEST_HEADERS_BASE: {
         "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 33; ) Okhttp/4.11.0",
         "Accept-Encoding": "gzip",
@@ -55,13 +56,9 @@ class Skland {
         let header = {...oldHeader};
         const urlParsed = new url.URL(apiUrl);
 
-        let bodyOrQuery = '';
-
-        if (method.toLowerCase() === 'get') {
-            bodyOrQuery = urlParsed.searchParams.toString();
-        } else if (body) {
-            bodyOrQuery = JSON.stringify(body);
-        }
+        let bodyOrQuery = method.toLowerCase() === 'get'
+            ? new URLSearchParams(body || urlParsed.searchParams).toString()
+            : (body ? JSON.stringify(body) : '');
 
         const {
             md5: sign, headerCa
@@ -193,6 +190,24 @@ class Skland {
         const credResp = await this.getCredResp(grantCode);
         const bindingList = await this.getBindingList(credResp);
         return await this.doSignIn(uid, credResp, bindingList);
+    }
+
+    async getUserInfo(uid, token){
+        const grantCode = await this.getGrantCode(token);
+        const credResp = await this.getCredResp(grantCode);
+        const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+        const timestamp = await this.getTimestamp();
+        const body = {uid: uid};
+        const signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+        signedHeaders.cred = credResp.cred;
+        const response = await axios({
+            method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body
+        });
+
+        if (response.status !== 200) {
+            throw new Error('Request failed with status code ' + response.status);
+        }
+        return response.data;
     }
 }
 
