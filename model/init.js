@@ -19,7 +19,6 @@ class Init {
       Log.e('设置文件不存在，将使用默认设置文件')
       fs.copyFileSync(config_default_path, config_path)
     }
-    // 同步config.yaml和config_default.yaml
     const config_default_yaml = Config.getDefConfig()
     const config_yaml = Config.getConfig()
     for (const key in config_default_yaml) {
@@ -34,6 +33,7 @@ class Init {
     }
     Config.setConfig(config_yaml)
   }
+
 }
 
 export default new Init()

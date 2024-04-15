@@ -1,15 +1,14 @@
 import YAML from 'yaml'
 import fs from 'fs'
-import { pluginRoot } from '../model/path.js'
+import {pluginRoot} from '../model/path.js'
 import Log from '../utils/logs.js'
 
 class Config {
   getConfig() {
     try {
-      const config_data = YAML.parse(
-        fs.readFileSync(`${pluginRoot}/config/config/config.yaml`, 'utf-8')
+      return YAML.parse(
+          fs.readFileSync(`${pluginRoot}/config/config/config.yaml`, 'utf-8')
       )
-      return config_data
     } catch (err) {
       Log.e('读取config.yaml失败', err)
       return false
@@ -18,10 +17,9 @@ class Config {
 
   getDefConfig() {
     try {
-      const config_default_data = YAML.parse(
-        fs.readFileSync(`${pluginRoot}/config/config_default.yaml`, 'utf-8')
+      return YAML.parse(
+          fs.readFileSync(`${pluginRoot}/config/config_default.yaml`, 'utf-8')
       )
-      return config_default_data
     } catch (err) {
       Log.e('读取config_default.yaml失败', err)
       return false
