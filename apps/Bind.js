@@ -10,7 +10,7 @@ export class BindToken extends plugin {
             priority: 1009,
             rule: [
                 {
-                    reg: "^#?skland绑定.*$",
+                    reg: "^#?(skland|(明日)?方舟)绑定.*$",
                     fnc: "bindToken"
                 }
             ]

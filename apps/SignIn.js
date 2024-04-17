@@ -10,7 +10,7 @@ export class SignIn extends plugin {
             priority: 1009,
             rule: [
                 {
-                    reg: "^#?skland签到$",
+                    reg: "^#?(skland|(明日)?方舟)签到$",
                     fnc: "signIn"
                 }
             ]
@@ -19,7 +19,7 @@ export class SignIn extends plugin {
 
     async signIn(e) {
         let user_id = e.user_id;
-        let accountList = await Config.getUserConfig(user_id)
+        let accountList = JSON.parse(await redis.get(`Yunzai:skland:${user_id}`)) || await Config.getUserConfig(user_id)
 
         if (accountList.length === 0) {
             await e.reply("你还没有绑定任何账号呢，请先绑定账号")

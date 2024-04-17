@@ -8,7 +8,7 @@ class Init {
     constructor() {
         this.initConfig()
         this.syncConfig().then(syncCount => {
-            console.log(`[Skland-Plugin] 同步了 ${syncCount} 个用户信息`)
+            Log.i(`[Skland-Plugin] 同步了 ${syncCount} 个用户信息`)
         });
     }
 
@@ -53,7 +53,7 @@ class Init {
                     let userInfo = YAML.parse(await fs.promises.readFile(`${_path}/data/skland/${fileName}`, 'utf-8'));
                     await redis.set(`Yunzai:skland:${fileName.split('.')[0]}`, JSON.stringify(userInfo))
                 } catch (err) {
-                    console.error(err);
+                    Log.e(err);
                     return null;
                 }
             })
