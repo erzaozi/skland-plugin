@@ -2,7 +2,6 @@ import plugin from '../../../lib/plugins/plugin.js'
 import { createRequire } from 'module'
 import lodash from 'lodash'
 import { Restart } from '../../other/restart.js'
-import Init from '../model/init.js'
 
 const require = createRequire(import.meta.url)
 const { exec, execSync } = require('child_process')
@@ -21,7 +20,7 @@ export class Update extends plugin {
       priority: 1009,
       rule: [
         {
-          reg: '^#skland((插件)?(强制)?更新| update)$',
+          reg: '^#(skland|(明日)?方舟)((插件)?(强制)?更新| update)$',
           fnc: 'update'
         }
       ]
