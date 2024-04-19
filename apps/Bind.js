@@ -19,31 +19,26 @@ export class BindToken extends plugin {
 
     async bindToken(e) {
         const token = e.msg.replace(/#?(skland|(明日)?方舟)绑定/g, "").trim();
-
         const skland = new Skland();
-        const data = await skland.isAvailable(token);
+        const { status, message, bindingList, credResp } = await skland.isAvailable(token);
 
-        if (!data.status) {
-            return await e.reply(`绑定失败！原因：${data.message}`);
-        }
+        status || await e.reply(`绑定失败！原因：${message}`);
 
         const userConfig = Config.getUserConfig(e.user_id);
         const userData = {
-            userId: data.credResp.user_id,
+            userId: credResp.userId,
             token,
-            uid: data.bindingList.map(item => item.uid)
+            uid: bindingList.map(item => item.uid)
         };
+        const userIndex = userConfig.findIndex(item => item.userId === credResp.user_id);
 
-        const userIndex = userConfig.findIndex(item => item.userId === data.credResp.user_id);
-        if (userIndex !== -1) {
-            userConfig[userIndex] = userData;
-        } else {
-            userConfig.push(userData);
-        }
+        userIndex !== -1 ? (userConfig[userIndex] = userData) : userConfig.push(userData);
 
         Config.setUserConfig(e.user_id, userConfig);
         await redis.set(`Yunzai:skland:${e.user_id}`, JSON.stringify(userConfig));
 
-        return await e.reply("绑定成功！");
+        const msg = `共绑定${bindingList.length}个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
+
+        return await e.reply(msg);
     }
 }
