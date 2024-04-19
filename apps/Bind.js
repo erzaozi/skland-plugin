@@ -17,33 +17,33 @@ export class BindToken extends plugin {
         })
     }
 
-    async bindToken(event) {
-        const { user_id, msg } = event;
-        const token = msg.replace(/#?skland绑定/g, '');
-        const sklandInstance = new Skland();
+    async bindToken(e) {
+        const token = e.msg.replace(/#?(skland|(明日)?方舟)绑定/g, "").trim();
 
-        try {
-            const grantCode = await sklandInstance.getGrantCode(token);
-            const credentials = await sklandInstance.getCredResp(grantCode);
-            const bindingList = await sklandInstance.getBindingList(credentials);
-            const {userId} = credentials;
-            const uidList = bindingList.map(item => item.uid);
-            let userConfig = Config.getUserConfig(user_id);
-            const userData = { userId, token, uid: uidList };
+        const skland = new Skland();
+        const data = await skland.isAvailable(token);
 
-            const userIndex = userConfig.findIndex(item => item.userId === userId);
-            if (userIndex !== -1) {
-                userConfig[userIndex] = userData;
-            } else {
-                userConfig.push(userData);
-            }
-
-            Config.setUserConfig(user_id, userConfig);
-            await redis.set(`Yunzai:skland:${user_id}`, JSON.stringify(userConfig));
-            return await event.reply("绑定成功！");
-        } catch (error) {
-            console.log(error);
-            return await event.reply("绑定失败！");
+        if (!data.status) {
+            return await e.reply(`绑定失败！原因：${data.message}`);
         }
+
+        const userConfig = Config.getUserConfig(e.user_id);
+        const userData = {
+            userId: data.credResp.user_id,
+            token,
+            uid: data.bindingList.map(item => item.uid)
+        };
+
+        const userIndex = userConfig.findIndex(item => item.userId === data.credResp.user_id);
+        if (userIndex !== -1) {
+            userConfig[userIndex] = userData;
+        } else {
+            userConfig.push(userData);
+        }
+
+        Config.setUserConfig(e.user_id, userConfig);
+        await redis.set(`Yunzai:skland:${e.user_id}`, JSON.stringify(userConfig));
+
+        return await e.reply("绑定成功！");
     }
 }

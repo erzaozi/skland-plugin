@@ -185,11 +185,19 @@ class Skland {
         return parseSignResponse(response.data, server, drName, uid);
     }
 
-    async runSignIn(uid, token) {
-        const grantCode = await this.getGrantCode(token);
-        const credResp = await this.getCredResp(grantCode);
-        const bindingList = await this.getBindingList(credResp);
-        return await this.doSignIn(uid, credResp, bindingList);
+    async isAvailable(token) {
+        try {
+            const grantCode = await this.getGrantCode(token);
+            const credResp = await this.getCredResp(grantCode);
+            try {
+                const bindingList = await this.getBindingList(credResp);
+                return { status: true, grantCode, credResp, bindingList };
+            } catch (error) {
+                return { status: false, message: '该账号未绑定明日方舟角色' };
+            }
+        } catch (error) {
+            return { status: false, message: '该Token无效' };
+        }
     }
 
     async getUserInfo(uid, token){
