@@ -41,7 +41,7 @@ export class SignIn extends plugin {
                 continue;
             }
 
-            let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`).catch(error => { return error })));
+            let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`)));
             data.push({ message: messages.join('') });
         }
         logger.info(data)
@@ -51,36 +51,33 @@ export class SignIn extends plugin {
 
     async autoSignIn() {
         const { skland_auto_signin_list: autoSignInList } = Config.getConfig();
-        let successNumberList = await Promise.all(autoSignInList.map(async user => {
-            let successNumber = 0;
+        let successNumber = 0;
+        for (let user of autoSignInList) {
+            let message = []
 
             const [botId, groupId, userId] = user.split(':');
             const accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(user);
             if (accountList.length === 0) {
-                return successNumber;
+                continue;
             }
-
-            const skland = new Skland();
-            const data = [{ message: `森空岛自动签到:${userId}` }];
 
             for (let account of accountList) {
+                const skland = new Skland();
                 const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+
                 if (!status) {
-                    data.push({ message: "该账号的Token已失效，该账号将被移除" });
+                    message.push(`账号${account.userId}的Token已失效，该账号将被移除`)
                     continue;
                 }
-                let message = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`).catch(error => { return error })));
-                data.push({ message: message.join('') });
-                successNumber++;
-            }
 
-            if (groupId) {
-                Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg(data));
-            } else {
-                Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg(data));
+                let results = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList)));
+                for (let result of results) {
+                    if (result.status) successNumber++
+                }
+                await new Promise(resolve => setTimeout(resolve, 53000 + Math.floor((Math.random() * 42000))))
             }
-            return successNumber;
-        }))
-        logger.mark('今日执行自动签到账号数量: ' + successNumberList.reduce((total, num) => total + num, 0))
+            if (message.length !== 0) Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg({ message: message.join('\n') }))
+        }
+        Bot.sendMasterMsg?.('[skland-plugin] 今日执行自动签到账号数量: ' + successNumber)
     }
 }

@@ -124,7 +124,7 @@ class Skland {
         let data = {uid, gameId: '0'};
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            throw new Error('未绑定明日方舟账号');
+            return {status: false, text: `[未知] 未知 UID:${uid} 签到失败\n未绑定明日方舟角色`};
         }
         let drName, server;
         for (let i of bindingList) {
@@ -136,7 +136,7 @@ class Skland {
             }
         }
         if (!drName || !server) {
-            throw new Error('未找到对应uid的明日方舟账号');
+            return {status: false, text: `[${server ? server: '未知'}] [${drName ? drName: '未知'}] UID:${uid} 签到失败\n未找到对应UID的明日方舟角色`};
         }
 
         function parseSignResponse(signResponse, server, drName, uid) {
@@ -146,7 +146,7 @@ class Skland {
                 text = `[${server}] ${drName} UID:${uid} 签到成功\n`;
                 let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
-                    throw new Error(`未能获取奖励列表，${JSON.stringify(signResponse)}`);
+                    text += `未能获取奖励列表\n`
                 }
                 for (let award of awards) {
                     let resource = award['resource'] || {};
