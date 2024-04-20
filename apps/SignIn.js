@@ -18,29 +18,28 @@ export class SignIn extends plugin {
     }
 
     async signIn(e) {
-        let user_id = e.user_id;
-        let accountList = JSON.parse(await redis.get(`Yunzai:skland:${user_id}`)) || await Config.getUserConfig(user_id)
+        let accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
-        if (accountList.length === 0) {
-            await e.reply("你还没有绑定任何账号呢，请先绑定账号")
-            return true
+        if (!accountList.length) {
+            return await e.reply("你还没有绑定任何账号呢，请先绑定账号");
         }
 
-        const sklandInstance = new Skland();
+        const skland = new Skland();
+        const data = [];
 
-        let msg = "======Skland签到结果======"
-        for (let item of accountList) {
-            let uidList = item.uid;
-            let token = item.token
-            for (let uid of uidList) {
-                await sklandInstance.runSignIn(uid, token).then(res => {
-                    if (res.status) {
-                        msg += res.text
-                    }
-                })
+        for (let account of accountList) {
+            const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+
+            if (!status) {
+                data.push({ message: "该账号的Token已失效，该账号将被移除" });
+                continue;
             }
+
+            let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`)));
+            data.push({ message: messages.join('') });
         }
-        await e.reply(msg)
-        return true
+        logger.info(data)
+        await e.reply(Bot.makeForwardMsg(data));
+        return true;
     }
 }

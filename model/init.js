@@ -47,20 +47,22 @@ class Init {
 
     async syncConfig() {
         let fileList = await fs.promises.readdir(`${_path}/data/skland`);
-        let userInfos = await Promise.all(
-            fileList.filter(fileName => fileName.endsWith('.yaml')).map(async fileName => {
-                try {
-                    let userInfo = YAML.parse(await fs.promises.readFile(`${_path}/data/skland/${fileName}`, 'utf-8'));
-                    await redis.set(`Yunzai:skland:${fileName.split('.')[0]}`, JSON.stringify(userInfo))
-                } catch (err) {
-                    Log.e(err);
-                    return null;
-                }
-            })
-        );
-        return userInfos.filter(item=>item).length;
-    }
+        let successCount = 0;
 
+        for (let fileName of fileList) {
+            if (!fileName.endsWith('.yaml')) continue;
+
+            try {
+                let userInfo = YAML.parse(await fs.promises.readFile(`${_path}/data/skland/${fileName}`, 'utf-8'));
+                await redis.set(`Yunzai:skland:${fileName.split('.')[0]}`, JSON.stringify(userInfo));
+                successCount++;
+            } catch (err) {
+                logger.error(`[Skland-Plugin] 同步用户信息失败：${err}`)
+            }
+        }
+
+        return successCount;
+    }
 }
 
 export default new Init()

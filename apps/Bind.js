@@ -30,14 +30,14 @@ export class BindToken extends plugin {
             token,
             uid: bindingList.map(item => item.uid)
         };
-        const userIndex = userConfig.findIndex(item => item.userId === credResp.user_id);
+        const userIndex = userConfig.findIndex(item => item.userId === credResp.userId);
 
         userIndex !== -1 ? (userConfig[userIndex] = userData) : userConfig.push(userData);
 
         Config.setUserConfig(e.user_id, userConfig);
         await redis.set(`Yunzai:skland:${e.user_id}`, JSON.stringify(userConfig));
 
-        const msg = `共绑定${bindingList.length}个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
+        const msg = `该账号共绑定${bindingList.length}个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
 
         return await e.reply(msg);
     }

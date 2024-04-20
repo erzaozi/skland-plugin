@@ -79,13 +79,9 @@ class Skland {
         try {
             const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
 
-            if (response.data.status !== 0) {
-                throw new Error(`获取认证码失败: ${JSON.stringify(response.data)}`);
-            }
-
             return response.data.data.code;
         } catch (error) {
-            console.error('获取认证码失败: ', error);
+            logger.error('获取认证码失败: ', error.response.data.msg);
             throw error;
         }
     }
@@ -96,13 +92,9 @@ class Skland {
         try {
             const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
 
-            if (response.data.code !== 0) {
-                throw new Error(`获取cred失败：${JSON.stringify(response.data)}`);
-            }
-
             return response.data.data;
         } catch (error) {
-            console.error('获取cred失败：', error);
+            logger.error('获取cred失败：', error.response.data.msg);
             throw error;
         }
     }
@@ -117,17 +109,12 @@ class Skland {
             method: 'get', url: CONSTANTS.BINDING_URL, headers: signedHeaders,
         });
 
-        if (response.status !== 200) {
-            throw new Error('Request failed with status code ' + response.status);
-        }
-
         const responseData = response.data;
         for (let i of responseData.data.list) {
             if (i.appCode === 'arknights') {
                 return i['bindingList'];
             }
         }
-
         throw new Error('未绑定明日方舟账号');
     }
 
@@ -169,18 +156,23 @@ class Skland {
                 }
             } else {
                 status = false;
-                text = `[${server}] ${drName} UID:${uid} 签到失败\n请检查以下信息：\n${JSON.stringify(signResponse)}`;
+                text = `[${server}] ${drName} UID:${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
             }
             return {status, text};
         }
 
         let signedHeaders = await this.getSignHeader(CONSTANTS.SIGN_URL, 'post', data, headers, credResp.token, timestamp);
-        const response = await axios({
-            method: 'post', url: CONSTANTS.SIGN_URL, headers: signedHeaders, data: data,
-        });
-
-        if (response.status !== 200) {
-            throw new Error('Request failed with status code ' + response.status);
+        let response;
+        try {
+            response = await axios({
+                method: 'post', url: CONSTANTS.SIGN_URL, headers: signedHeaders, data: data,
+            });
+        } catch (error) {
+            if (error.response) {
+                response = error.response;
+            } else {
+                return {status: false, text: `连接服务器失败：${error.message}`};
+            }
         }
         return parseSignResponse(response.data, server, drName, uid);
     }
@@ -196,7 +188,7 @@ class Skland {
                 return { status: false, message: '该账号未绑定明日方舟角色' };
             }
         } catch (error) {
-            return { status: false, message: '该Token无效' };
+            return { status: false, message: 'Token已过期' };
         }
     }
 
