@@ -47,7 +47,7 @@ export class SignIn extends plugin {
             data.push({ message: messages.join('') });
         }
 
-        if (deleteUserId.length !== 0) {
+        if (deleteUserId.length) {
             let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId))
             await Config.setUserConfig(e.user_id, newAccountList)
         }
@@ -85,7 +85,7 @@ export class SignIn extends plugin {
                 }
                 await new Promise(resolve => setTimeout(resolve, 53000 + Math.floor((Math.random() * 42000))))
             }
-            if (deleteUserId.length !== 0) {
+            if (deleteUserId.length) {
                 let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId))
                 await Config.setUserConfig(userId, newAccountList)
             }

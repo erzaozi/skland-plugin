@@ -60,9 +60,6 @@ class Config {
                 YAML.stringify(data),
             )
             redis.set(`Yunzai:skland:${userId}`, JSON.stringify(data));
-            init.syncConfig().then(syncCount => {
-                logger.info(`[Skland-Plugin] 同步了 ${syncCount} 个用户信息`)
-            });
         } catch (err) {
             logger.warn(`写入用户配置${userId}.yaml失败`, err)
             return false
