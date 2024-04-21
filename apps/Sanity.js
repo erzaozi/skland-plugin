@@ -43,7 +43,7 @@ export class Sanity extends plugin {
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp)));
+            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList)));
             data.push(results.map(result => result.text).join('\n'));
         }
 
@@ -78,7 +78,7 @@ export class Sanity extends plugin {
                     continue;
                 }
 
-                const results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp)));
+                const results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList)));
                 const filterResults = results.filter(result => result.isPush);
                 if (filterResults.length) data.push({message: filterResults.map(result => result.text).join('\n')});
             }
