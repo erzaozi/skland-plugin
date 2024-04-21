@@ -124,7 +124,7 @@ class Skland {
         let data = { uid, gameId: '0' };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return { status: false, text: `[未知] 未知 UID：${uid} 签到失败\n未绑定明日方舟角色` };
+            return { status: false, text: `[未知] 未知\nUID：${uid} 签到失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -138,7 +138,7 @@ class Skland {
         if (!drName || !server) {
             return {
                 status: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID：${uid} 签到失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 签到失败\n未找到对应UID的明日方舟角色`
             };
         }
 
@@ -146,7 +146,7 @@ class Skland {
             let status, text
             if (signResponse.code === 0) {
                 status = true;
-                text = `[${server}] ${drName} UID：${uid} 签到成功\n`;
+                text = `[${server}] ${drName}\nUID：${uid} 签到成功\n`;
                 let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
                     text += `未能获取奖励列表\n`
@@ -159,7 +159,7 @@ class Skland {
                 }
             } else {
                 status = false;
-                text = `[${server}] ${drName} UID：${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
+                text = `[${server}] ${drName}\nUID：${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
             }
             return { status, text };
         }
@@ -201,7 +201,7 @@ class Skland {
         let body = { uid: uid };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return { isPush: false, text: `[未知] 未知 UID：${uid} 获取理智失败\n未绑定明日方舟角色` };
+            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取理智失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -214,7 +214,7 @@ class Skland {
         if (!drName || !server) {
             return {
                 isPush: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
             };
         }
 
@@ -223,7 +223,7 @@ class Skland {
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
             let isPush = currentAp < ap.max;
-            let text = `[${server}] ${drName} UID：${uid} 获取理智成功\n`;
+            let text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n`;
             text += `当前理智：${currentAp} / ${ap.max}\n`;
             text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}\n`;
             return { isPush, text };
