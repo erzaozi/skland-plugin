@@ -49,11 +49,11 @@ class Skland {
         let hmac = crypto.createHmac('sha256', Buffer.from(token, 'utf-8')).update(s).digest('hex');
         let md5 = crypto.createHash('md5').update(hmac).digest('hex');
 
-        return {md5: md5, headerCa: headerCa};
+        return { md5: md5, headerCa: headerCa };
     }
 
     async getSignHeader(apiUrl, method, body, oldHeader, signToken, timestamp) {
-        let header = {...oldHeader};
+        let header = { ...oldHeader };
         const urlParsed = new url.URL(apiUrl);
 
         let bodyOrQuery = method.toLowerCase() === 'get'
@@ -66,7 +66,7 @@ class Skland {
 
         header['sign'] = sign;
 
-        header = {...header, ...headerCa};
+        header = { ...header, ...headerCa };
 
         return header;
     }
@@ -77,7 +77,7 @@ class Skland {
         };
 
         try {
-            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
+            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
 
             return response.data.data.code;
         } catch (error) {
@@ -87,10 +87,10 @@ class Skland {
     }
 
     async getCredResp(grantCode) {
-        const data = {code: grantCode, kind: 1};
+        const data = { code: grantCode, kind: 1 };
 
         try {
-            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
+            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
 
             return response.data.data;
         } catch (error) {
@@ -121,10 +121,10 @@ class Skland {
     async doSignIn(uid, credResp, bindingList) {
         let headers = CONSTANTS.REQUEST_HEADERS_BASE;
         headers.cred = credResp.cred;
-        let data = {uid, gameId: '0'};
+        let data = { uid, gameId: '0' };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return {status: false, text: `[未知] 未知 UID:${uid} 签到失败\n未绑定明日方舟角色`};
+            return { status: false, text: `[未知] 未知 UID：${uid} 签到失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -138,7 +138,7 @@ class Skland {
         if (!drName || !server) {
             return {
                 status: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID:${uid} 签到失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID：${uid} 签到失败\n未找到对应UID的明日方舟角色`
             };
         }
 
@@ -146,7 +146,7 @@ class Skland {
             let status, text
             if (signResponse.code === 0) {
                 status = true;
-                text = `[${server}] ${drName} UID:${uid} 签到成功\n`;
+                text = `[${server}] ${drName} UID：${uid} 签到成功\n`;
                 let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
                     text += `未能获取奖励列表\n`
@@ -159,9 +159,9 @@ class Skland {
                 }
             } else {
                 status = false;
-                text = `[${server}] ${drName} UID:${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
+                text = `[${server}] ${drName} UID：${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
             }
-            return {status, text};
+            return { status, text };
         }
 
         let signedHeaders = await this.getSignHeader(CONSTANTS.SIGN_URL, 'post', data, headers, credResp.token, timestamp);
@@ -174,7 +174,7 @@ class Skland {
             if (error.response) {
                 response = error.response;
             } else {
-                return {status: false, text: `连接服务器失败：${error.message}`};
+                return { status: false, text: `连接服务器失败：${error.message}` };
             }
         }
         return parseSignResponse(response.data, server, drName, uid);
@@ -186,22 +186,22 @@ class Skland {
             const credResp = await this.getCredResp(grantCode);
             try {
                 const bindingList = await this.getBindingList(credResp);
-                return {status: true, grantCode, credResp, bindingList};
+                return { status: true, grantCode, credResp, bindingList };
             } catch (error) {
-                return {status: false, message: '该账号未绑定明日方舟角色'};
+                return { status: false, message: '该账号未绑定明日方舟角色' };
             }
         } catch (error) {
-            return {status: false, message: 'Token已过期'};
+            return { status: false, message: 'Token已过期' };
         }
     }
 
     async getSanity(uid, credResp, bindingList) {
         const headers = CONSTANTS.REQUEST_HEADERS_BASE;
         headers.cred = credResp.cred;
-        let body = {uid: uid};
+        let body = { uid: uid };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return {isPush: false, text: `[未知] 未知 UID:${uid} 获取理智失败\n未绑定明日方舟角色`};
+            return { isPush: false, text: `[未知] 未知 UID：${uid} 获取理智失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -214,7 +214,7 @@ class Skland {
         if (!drName || !server) {
             return {
                 isPush: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID:${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
             };
         }
 
@@ -223,7 +223,7 @@ class Skland {
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
             let isPush = currentAp < ap.max;
-            let text = `[${server}] ${drName} UID:${uid} 获取理智成功\n`;
+            let text = `[${server}] ${drName} UID：${uid} 获取理智成功\n`;
             text += `当前理智：${currentAp} / ${ap.max}\n`;
             text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}\n`;
             return { isPush, text };
@@ -239,7 +239,7 @@ class Skland {
             if (error.response) {
                 response = error.response;
             } else {
-                return {isPush: false, text: `连接服务器失败：${error.message}`};
+                return { isPush: false, text: `连接服务器失败：${error.message}` };
             }
         }
         return parseSanityResponse(response.data, server, drName, uid);

@@ -16,7 +16,7 @@ export class SignIn extends plugin {
             ]
         })
         this.task = {
-            name: '[skland-plugin] 自动签到',
+            name: '[Skland-Plugin] 自动签到',
             fnc: () => this.autoSignIn(),
             cron: '0 4 * * *',
             log: true
@@ -38,7 +38,7 @@ export class SignIn extends plugin {
             const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
             if (!status) {
-                data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` });
+                data.push({ message: `账号 ${account.userId} 的Token已失效，该账号将被移除` });
                 deleteUserId.push(account.userId);
                 continue;
             }
@@ -74,7 +74,7 @@ export class SignIn extends plugin {
                 const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
                 if (!status) {
-                    data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` })
+                    data.push({ message: `账号 ${account.userId} 的Token已失效，该账号将被移除` })
                     deleteUserId.push(account.userId)
                     continue;
                 }
@@ -91,6 +91,6 @@ export class SignIn extends plugin {
             }
             if (data.length) Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg(data))
         }
-        Bot.sendMasterMsg?.('[skland-plugin] 今日执行自动签到账号数量: ' + successNumber)
+        Bot.sendMasterMsg?.(`[Skland-Plugin] 自动签到\n今日成功签到 ${successNumber} 个账号`)
     }
 }

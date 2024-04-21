@@ -19,6 +19,7 @@ export class BindToken extends plugin {
 
     async bindToken(e) {
         const token = e.msg.replace(/#?(skland|(明日)?方舟)绑定/g, "").trim();
+        if (!token) return await e.reply("请输入正确的Token！");
         const skland = new Skland();
         const { status, message, bindingList, credResp } = await skland.isAvailable(token);
 
@@ -36,7 +37,7 @@ export class BindToken extends plugin {
 
         Config.setUserConfig(e.user_id, userConfig);
 
-        const msg = `该账号共绑定${bindingList.length}个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
+        const msg = `该账号共绑定 ${bindingList.length} 个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
 
         return await e.reply(msg);
     }
