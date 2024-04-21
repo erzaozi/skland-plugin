@@ -192,22 +192,38 @@ class Skland {
         }
     }
 
-    async getUserInfo(uid, token){
-        const grantCode = await this.getGrantCode(token);
-        const credResp = await this.getCredResp(grantCode);
-        const headers = CONSTANTS.REQUEST_HEADERS_BASE;
-        const timestamp = await this.getTimestamp();
-        const body = {uid: uid};
-        const signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
-        signedHeaders.cred = credResp.cred;
-        const response = await axios({
-            method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body
-        });
-
-        if (response.status !== 200) {
-            throw new Error('Request failed with status code ' + response.status);
+    async getUserInfo(uid, credResp){
+        try {
+            const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+            const timestamp = await this.getTimestamp();
+            const body = {uid: uid};
+            const signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+            signedHeaders.cred = credResp.cred;
+            
+            const response = await axios({
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body
+            });
+    
+            if (response.status !== 200) {
+                return {status: false, text: response.status};
+            }
+            return {status: true, text: response.data};
+        } catch (error){
+            if (error.response) {
+                return {status: false, text: `${error.message}`};
+            } else {
+                return {status: false, text: `连接服务器失败：${error.message}`};
+            }
         }
-        return response.data;
+    }
+
+    /***
+     * @param uid
+     * @param credResp
+     * @returns {isPush, text}
+     */
+    async getAP(uid, credResp){
+        return {isPush: true, text: "测试文本"};
     }
 }
 

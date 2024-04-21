@@ -32,19 +32,26 @@ export class SignIn extends plugin {
 
         const skland = new Skland();
         const data = [];
+        let deleteUserId = [];
 
         for (let account of accountList) {
             const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
             if (!status) {
-                data.push({ message: "该账号的Token已失效，该账号将被移除" });
+                data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` });
+                deleteUserId.push(account.userId);
                 continue;
             }
 
             let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`)));
             data.push({ message: messages.join('') });
         }
-        logger.info(data)
+
+        if (deleteUserId.length !== 0) {
+            let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId))
+            await Config.setUserConfig(e.user_id, newAccountList)
+        }
+
         await e.reply(Bot.makeForwardMsg(data));
         return true;
     }
@@ -53,20 +60,22 @@ export class SignIn extends plugin {
         const { skland_auto_signin_list: autoSignInList } = Config.getConfig();
         let successNumber = 0;
         for (let user of autoSignInList) {
-            let message = []
-
             const [botId, groupId, userId] = user.split(':');
-            const accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(user);
-            if (accountList.length === 0) {
+            const accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(userId);
+            if (!accountList.length) {
                 continue;
             }
+
+            let data = [];
+            let deleteUserId = [];
 
             for (let account of accountList) {
                 const skland = new Skland();
                 const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
                 if (!status) {
-                    message.push(`账号${account.userId}的Token已失效，该账号将被移除`)
+                    data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` })
+                    deleteUserId.push(account.userId)
                     continue;
                 }
 
@@ -76,7 +85,11 @@ export class SignIn extends plugin {
                 }
                 await new Promise(resolve => setTimeout(resolve, 53000 + Math.floor((Math.random() * 42000))))
             }
-            if (message.length !== 0) Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg({ message: message.join('\n') }))
+            if (deleteUserId.length !== 0) {
+                let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId))
+                await Config.setUserConfig(userId, newAccountList)
+            }
+            if (data.length) Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg(data))
         }
         Bot.sendMasterMsg?.('[skland-plugin] 今日执行自动签到账号数量: ' + successNumber)
     }

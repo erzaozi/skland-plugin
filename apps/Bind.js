@@ -35,7 +35,6 @@ export class BindToken extends plugin {
         userIndex !== -1 ? (userConfig[userIndex] = userData) : userConfig.push(userData);
 
         Config.setUserConfig(e.user_id, userConfig);
-        await redis.set(`Yunzai:skland:${e.user_id}`, JSON.stringify(userConfig));
 
         const msg = `该账号共绑定${bindingList.length}个角色：` + bindingList.map(item => `\n[${item.channelName}] Dr.${item.nickName} (${item.uid})`).join('');
 
