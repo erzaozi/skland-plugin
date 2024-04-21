@@ -38,7 +38,7 @@ export class Sanity extends plugin {
             const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
             if (!status) {
-                data.push({ message: `账号 ${account.userId} 的Token已失效，该账号将被移除` });
+                data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：${account.uid.join('\n')}\n请重新绑定Token` });
                 deleteUserId.push(account.userId);
                 continue;
             }
@@ -73,7 +73,7 @@ export class Sanity extends plugin {
                 const { status, bindingList, credResp } = await skland.isAvailable(account.token);
 
                 if (!status) {
-                    data.push({ message: `账号 ${account.userId} 的Token已失效，该账号将被移除` });
+                    data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：${account.uid.join('\n')}\n请重新绑定Token` });
                     deleteUserId.push(account.userId);
                     continue;
                 }
