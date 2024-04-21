@@ -149,13 +149,13 @@ class Skland {
                 text = `[${server}] ${drName}\nUID：${uid} 签到成功\n`;
                 let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
-                    text += `未能获取奖励列表\n`
+                    text += `未能获取奖励列表`
                 }
                 for (let award of awards) {
                     let resource = award['resource'] || {};
                     text += `奖励ID：${resource.id}\n`;
                     text += `签到奖励：${resource.name} × ${award.count}\n`;
-                    text += `类型：${resource.type} ${award.type || '<Err>'}\n`;
+                    text += `类型：${resource.type} ${award.type || '<Err>'}`;
                 }
             } else {
                 status = false;
@@ -225,7 +225,7 @@ class Skland {
             let isPush = currentAp >= ap.max;
             let text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n`;
             text += `当前理智：${currentAp} / ${ap.max}\n`;
-            text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}\n`;
+            text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
             return { isPush, text };
         }
 

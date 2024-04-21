@@ -43,8 +43,8 @@ export class SignIn extends plugin {
                 continue;
             }
 
-            let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList).then(({ text }) => `${text}\n`)));
-            data.push({ message: messages.join('') });
+            let messages = await Promise.all(account.uid.map(uid => skland.doSignIn(uid, credResp, bindingList)));
+            data.push({ message: messages.map(message => message.text).join('\n') });
         }
 
         if (deleteUserId.length) {
