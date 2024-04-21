@@ -2,7 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js'
 import Skland from "../components/Code.js";
 import Config from "../components/Config.js";
 
-export class Reason extends plugin {
+export class Sanity extends plugin {
     constructor() {
         super({
             name: "Skland-理智查询",
@@ -11,7 +11,7 @@ export class Reason extends plugin {
             rule: [
                 {
                     reg: "^#?(skland|(明日)?方舟)理智值?$",
-                    fnc: "queryReason"
+                    fnc: "querySanity"
                 }
             ]
         })
@@ -23,7 +23,7 @@ export class Reason extends plugin {
         }
     }
 
-    async queryReason(e) {
+    async querySanity(e) {
         let accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
         if (!accountList.length) {
@@ -35,15 +35,15 @@ export class Reason extends plugin {
         let deleteUserId = [];
 
         for (let account of accountList) {
-            const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+            const {status, bindingList, credResp} = await skland.isAvailable(account.token);
 
             if (!status) {
-                data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` });
+                data.push({message: `账号${account.userId}的Token已失效，该账号将被移除`});
                 deleteUserId.push(account.userId);
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getAP(uid, credResp)));
+            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp)));
             data.push(results.map(result => result.text).join('\n'));
         }
 
@@ -52,12 +52,12 @@ export class Reason extends plugin {
             await Config.setUserConfig(e.user_id, newAccountList);
         }
 
-        await e.reply(Bot.makeForwardMsg([{ message: `用户${e.user_id}` }, ...data]));
+        await e.reply(Bot.makeForwardMsg([{message: `用户${e.user_id}`}, ...data]));
         return true;
     }
 
     async autoPush() {
-        const { skland_push_list: autoPushList } = Config.getConfig();
+        const {skland_push_list: autoPushList} = Config.getConfig();
         await Promise.all(autoPushList.map(async user => {
             const [botId, groupId, userId] = user.split(':');
             let accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(userId);
@@ -70,17 +70,17 @@ export class Reason extends plugin {
             let deleteUserId = [];
 
             for (let account of accountList) {
-                const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+                const {status, bindingList, credResp} = await skland.isAvailable(account.token);
 
                 if (!status) {
-                    data.push({ message: `账号${account.userId}的Token已失效，该账号将被移除` });
+                    data.push({message: `账号${account.userId}的Token已失效，该账号将被移除`});
                     deleteUserId.push(account.userId);
                     continue;
                 }
 
-                const results = await Promise.all(account.uid.map(uid => skland.getAP(uid, credResp)));
+                const results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp)));
                 const filterResults = results.filter(result => result.isPush);
-                if (filterResults.length) data.push({ message: filterResults.map(result => result.text).join('\n') });
+                if (filterResults.length) data.push({message: filterResults.map(result => result.text).join('\n')});
             }
             if (deleteUserId.length) {
                 let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId));
@@ -88,9 +88,9 @@ export class Reason extends plugin {
             }
             if (data.length) {
                 if (groupId === "undefined") {
-                    await Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg([{ message: `用户${userId}` }, ...data]))
+                    await Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg([{message: `用户${userId}`}, ...data]))
                 } else {
-                    await Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg([{ message: `用户${userId}` }, ...data]))
+                    await Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg([{message: `用户${userId}`}, ...data]))
                 }
             }
             return true;

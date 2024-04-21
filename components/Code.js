@@ -136,7 +136,10 @@ class Skland {
             }
         }
         if (!drName || !server) {
-            return {status: false, text: `[${server ? server: '未知'}] [${drName ? drName: '未知'}] UID:${uid} 签到失败\n未找到对应UID的明日方舟角色`};
+            return {
+                status: false,
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID:${uid} 签到失败\n未找到对应UID的明日方舟角色`
+            };
         }
 
         function parseSignResponse(signResponse, server, drName, uid) {
@@ -183,47 +186,63 @@ class Skland {
             const credResp = await this.getCredResp(grantCode);
             try {
                 const bindingList = await this.getBindingList(credResp);
-                return { status: true, grantCode, credResp, bindingList };
+                return {status: true, grantCode, credResp, bindingList};
             } catch (error) {
-                return { status: false, message: '该账号未绑定明日方舟角色' };
+                return {status: false, message: '该账号未绑定明日方舟角色'};
             }
         } catch (error) {
-            return { status: false, message: 'Token已过期' };
+            return {status: false, message: 'Token已过期'};
         }
     }
 
-    async getUserInfo(uid, credResp){
+    async getSanity(uid, credResp, bindingList) {
+        const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+        headers.cred = credResp.cred;
+        let body = {uid: uid};
+        const timestamp = await this.getTimestamp();
+        if (!bindingList.length) {
+            return {isPush: false, text: `[未知] 未知 UID:${uid} 获取理智失败\n未绑定明日方舟角色`};
+        }
+        let drName, server;
+        for (let i of bindingList) {
+            if (i.uid === uid) {
+                drName = 'Dr.' + i['nickName'];
+                server = i['channelName'];
+                break;
+            }
+        }
+        if (!drName || !server) {
+            return {
+                isPush: false,
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}] UID:${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+            };
+        }
+
+        function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
+            let currentAp = Math.min(ap['current'] + elapsed, ap.max);
+            let isPush = currentAp < ap.max;
+            let text = `[${server}] ${drName} UID:${uid} 获取理智成功\n`;
+            text += `当前理智：${currentAp} / ${ap.max}\n`;
+            text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}\n`;
+            return { isPush, text };
+        }
+
+        let signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+        let response;
         try {
-            const headers = CONSTANTS.REQUEST_HEADERS_BASE;
-            const timestamp = await this.getTimestamp();
-            const body = {uid: uid};
-            const signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
-            signedHeaders.cred = credResp.cred;
-            
-            const response = await axios({
-                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body
+            response = await axios({
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
             });
-    
-            if (response.status !== 200) {
-                return {status: false, text: response.status};
-            }
-            return {status: true, text: response.data};
-        } catch (error){
+        } catch (error) {
             if (error.response) {
-                return {status: false, text: `${error.message}`};
+                response = error.response;
             } else {
-                return {status: false, text: `连接服务器失败：${error.message}`};
+                return {isPush: false, text: `连接服务器失败：${error.message}`};
             }
         }
-    }
-
-    /***
-     * @param uid
-     * @param credResp
-     * @returns {isPush, text}
-     */
-    async getAP(uid, credResp){
-        return {isPush: true, text: "测试文本"};
+        return parseSanityResponse(response.data, server, drName, uid);
     }
 }
 
