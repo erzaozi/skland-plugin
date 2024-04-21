@@ -222,7 +222,7 @@ class Skland {
             const currentTime = Math.floor(Date.now() / 1000);
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
-            let isPush = currentAp < ap.max;
+            let isPush = currentAp >= ap.max;
             let text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n`;
             text += `当前理智：${currentAp} / ${ap.max}\n`;
             text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}\n`;

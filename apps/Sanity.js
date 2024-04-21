@@ -57,7 +57,7 @@ export class Sanity extends plugin {
     }
 
     async autoPush() {
-        const { skland_push_list: autoPushList } = Config.getConfig();
+        const { skland_auto_push_list: autoPushList } = Config.getConfig();
         await Promise.all(autoPushList.map(async user => {
             const [botId, groupId, userId] = user.split(':');
             let accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(userId);
