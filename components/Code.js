@@ -220,15 +220,19 @@ class Skland {
 
         async function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
             const currentTime = Math.floor(Date.now() / 1000);
-            const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
-            let currentAp = Math.min(ap['current'] + elapsed, ap.max);
-            let isPushed = await redis.get(`Yunzai:skland:pushed:${uid}}`) ? true : false
-            let isPush = false
-            if (!isPushed && currentAp >= ap.max) isPush = await redis.set(`Yunzai:skland:pushed:${uid}}`, 'true') && true
-            if (isPushed && currentAp < ap.max) await redis.del(`Yunzai:skland:pushed:${uid}}`)
-            let text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n`;
-            text += `当前理智：${currentAp} / ${ap.max}\n`;
-            text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
+            const elapsed = (currentTime - ap.lastApAddTime) / 360;
+            let currentAp = Math.min(ap.current + elapsed, ap.max);
+            const key = `Yunzai:skland:pushed:${uid}`;
+            let isPush = false;
+
+            if (!await redis.get(key) && currentAp >= ap.max) {
+                isPush = await redis.set(key, 'true');
+            } else if (await redis.get(key) && currentAp < ap.max) {
+                await redis.del(key);
+            }
+
+            const text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n当前理智：${currentAp} / ${ap.max}\n恢复时间：${new Date(ap.completeRecoveryTime * 1000).toLocaleString()}`;
+
             return { isPush, text };
         }
 
