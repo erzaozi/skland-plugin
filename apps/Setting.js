@@ -51,7 +51,7 @@ export class Setting extends plugin {
 
         const config = await Config.getConfig();
         const key = `${e.self_id}:${e.group_id}:${e.user_id}`;
-        const index = config["skland_auto_signin_list"].indexOf(key);
+        const index = config["skland_auto_push_list"].indexOf(key);
 
         if (e.msg.includes('开启')) {
             if (index === -1) {
