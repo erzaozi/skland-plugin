@@ -59,7 +59,7 @@ class Config {
                 `${_path}/data/skland/${userId}.yaml`,
                 YAML.stringify(data),
             )
-            redis.set(`Yunzai:skland:${userId}`, JSON.stringify(data));
+            redis.set(`Yunzai:skland:users:${userId}`, JSON.stringify(data));
         } catch (err) {
             logger.warn(`写入用户配置${userId}.yaml失败`, err)
             return false

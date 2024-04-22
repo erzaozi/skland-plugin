@@ -24,7 +24,7 @@ export class Sanity extends plugin {
     }
 
     async querySanity(e) {
-        let accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        let accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
         if (!accountList.length) {
             return await e.reply("你还没有绑定任何账号呢，请先绑定账号");
@@ -60,7 +60,7 @@ export class Sanity extends plugin {
         const { skland_auto_push_list: autoPushList } = Config.getConfig();
         await Promise.all(autoPushList.map(async user => {
             const [botId, groupId, userId] = user.split(':');
-            let accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(userId);
+            let accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${userId}`)) || await Config.getUserConfig(userId);
             if (!accountList.length) {
                 return
             }
@@ -78,7 +78,7 @@ export class Sanity extends plugin {
                     continue;
                 }
 
-                const results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList)));
+                const results = await Promise.all(account.uid.map(uid => skland.getSaznity(uid, credResp, bindingList)));
                 const filterResults = results.filter(result => result.isPush);
                 if (filterResults.length) data.push({ message: filterResults.map(result => result.text).join('\n') });
             }
@@ -90,6 +90,7 @@ export class Sanity extends plugin {
                 if (groupId === "undefined") {
                     await Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
                 } else {
+                    await Bot[botId]?.pickGroup(groupId).sendMsg(segment.at(userId))
                     await Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
                 }
             }

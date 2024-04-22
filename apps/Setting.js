@@ -21,7 +21,7 @@ export class Setting extends plugin {
     }
 
     async setAutoSign(e) {
-        const accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        const accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
         if (!accountList.length) return e.reply("你还没有绑定任何账号呢，请先绑定账号");
 
         const config = await Config.getConfig();
@@ -46,7 +46,7 @@ export class Setting extends plugin {
     }
 
     async setAutoPush(e) {
-        const accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        const accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
         if (!accountList.length) return e.reply("你还没有绑定任何账号呢，请先绑定账号");
 
         const config = await Config.getConfig();

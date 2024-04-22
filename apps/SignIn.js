@@ -24,7 +24,7 @@ export class SignIn extends plugin {
     }
 
     async signIn(e) {
-        let accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        let accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
         if (!accountList.length) {
             return await e.reply("你还没有绑定任何账号呢，请先绑定账号");
@@ -61,7 +61,7 @@ export class SignIn extends plugin {
         let successNumber = 0;
         for (let user of autoSignInList) {
             const [botId, groupId, userId] = user.split(':');
-            const accountList = JSON.parse(await redis.get(`Yunzai:skland:${userId}`)) || await Config.getUserConfig(userId);
+            const accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${userId}`)) || await Config.getUserConfig(userId);
             if (!accountList.length) {
                 continue;
             }

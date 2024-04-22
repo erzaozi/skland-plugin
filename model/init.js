@@ -53,7 +53,7 @@ class Init {
 
             try {
                 let userInfo = YAML.parse(await fs.promises.readFile(`${_path}/data/skland/${fileName}`, 'utf-8'));
-                await redis.set(`Yunzai:skland:${fileName.split('.')[0]}`, JSON.stringify(userInfo));
+                await redis.set(`Yunzai:skland:users:${fileName.split('.')[0]}`, JSON.stringify(userInfo));
                 successCount++;
             } catch (err) {
                 logger.error(`[Skland-Plugin] 同步用户信息失败：${err}`)

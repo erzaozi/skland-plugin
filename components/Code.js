@@ -218,11 +218,14 @@ class Skland {
             };
         }
 
-        function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
             const currentTime = Math.floor(Date.now() / 1000);
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
-            let isPush = currentAp >= ap.max;
+            let isPushed = await redis.get(`Yunzai:skland:pushed:${uid}}`) ? true : false
+            let isPush = false
+            if (!isPushed && currentAp >= ap.max) isPush = await redis.set(`Yunzai:skland:pushed:${uid}}`, 'true') && true
+            if (isPushed && currentAp < ap.max) await redis.del(`Yunzai:skland:pushed:${uid}}`)
             let text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n`;
             text += `当前理智：${currentAp} / ${ap.max}\n`;
             text += `恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
@@ -242,7 +245,7 @@ class Skland {
                 return { isPush: false, text: `连接服务器失败：${error.message}` };
             }
         }
-        return parseSanityResponse(response.data, server, drName, uid);
+        return await parseSanityResponse(response.data, server, drName, uid);
     }
 }
 
