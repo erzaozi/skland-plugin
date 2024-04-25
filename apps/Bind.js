@@ -1,6 +1,7 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import Skland from "../components/Code.js";
 import Config from "../components/Config.js";
+import { Help } from './Help.js';
 
 export class BindToken extends plugin {
     constructor() {
@@ -19,11 +20,16 @@ export class BindToken extends plugin {
 
     async bindToken(e) {
         const token = e.msg.replace(/#?(skland|(明日)?方舟)绑定/g, "").trim();
-        if (!token) return await e.reply("请输入正确的Token！");
+
+        if (!token) return await e.reply("请输入正确的Token\n使用【#skland绑定帮助】查看获取Token方法！");
+
         const skland = new Skland();
         const { status, message, bindingList, credResp } = await skland.isAvailable(token);
 
-        status || await e.reply(`绑定失败！原因：${message}`);
+        if (!status) {
+            await e.reply(`绑定失败！原因：${message}\n使用【#skland绑定帮助】查看获取Token方法`);
+            return true;
+        }
 
         const userConfig = Config.getUserConfig(e.user_id);
         const userData = {
