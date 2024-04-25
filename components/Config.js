@@ -1,7 +1,6 @@
 import YAML from 'yaml'
 import fs from 'fs'
 import { pluginRoot, _path } from '../model/path.js'
-import Log from '../utils/logs.js'
 
 class Config {
     getConfig() {
@@ -10,7 +9,7 @@ class Config {
                 fs.readFileSync(`${pluginRoot}/config/config/config.yaml`, 'utf-8')
             )
         } catch (err) {
-            Log.e('读取config.yaml失败', err)
+            logger.warn('读取config.yaml失败', err)
             return false
         }
     }
@@ -21,7 +20,7 @@ class Config {
                 fs.readFileSync(`${pluginRoot}/config/config_default.yaml`, 'utf-8')
             )
         } catch (err) {
-            Log.e('读取config_default.yaml失败', err)
+            logger.warn('读取config_default.yaml失败', err)
             return false
         }
     }
@@ -34,14 +33,14 @@ class Config {
             )
             return true
         } catch (err) {
-            Log.e('写入config.yaml失败', err)
+            logger.warn('写入config.yaml失败', err)
             return false
         }
     }
 
     getUserConfig(userId) {
         try {
-            if (fs.existsSync(`${_path}/data/skland/${userId}.yaml`)){
+            if (fs.existsSync(`${_path}/data/skland/${userId}.yaml`)) {
                 return YAML.parse(
                     fs.readFileSync(`${_path}/data/skland/${userId}.yaml`, 'utf-8')
                 )
@@ -49,7 +48,7 @@ class Config {
                 return []
             }
         } catch (err) {
-            Log.e(`读取用户配置${userId}.yaml失败`, err)
+            logger.warn(`读取用户配置${userId}.yaml失败`, err)
             return false
         }
     }
@@ -60,9 +59,9 @@ class Config {
                 `${_path}/data/skland/${userId}.yaml`,
                 YAML.stringify(data),
             )
-            return true
+            redis.set(`Yunzai:skland:users:${userId}`, JSON.stringify(data));
         } catch (err) {
-            Log.e(`写入用户配置${userId}.yaml失败`, err)
+            logger.warn(`写入用户配置${userId}.yaml失败`, err)
             return false
         }
     }

@@ -21,7 +21,7 @@ export class Setting extends plugin {
     }
 
     async setAutoSign(e) {
-        const accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        const accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
         if (!accountList.length) return e.reply("你还没有绑定任何账号呢，请先绑定账号");
 
         const config = await Config.getConfig();
@@ -46,12 +46,12 @@ export class Setting extends plugin {
     }
 
     async setAutoPush(e) {
-        const accountList = JSON.parse(await redis.get(`Yunzai:skland:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
+        const accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
         if (!accountList.length) return e.reply("你还没有绑定任何账号呢，请先绑定账号");
 
         const config = await Config.getConfig();
         const key = `${e.self_id}:${e.group_id}:${e.user_id}`;
-        const index = config["skland_auto_signin_list"].indexOf(key);
+        const index = config["skland_auto_push_list"].indexOf(key);
 
         if (e.msg.includes('开启')) {
             if (index === -1) {

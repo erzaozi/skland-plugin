@@ -49,11 +49,11 @@ class Skland {
         let hmac = crypto.createHmac('sha256', Buffer.from(token, 'utf-8')).update(s).digest('hex');
         let md5 = crypto.createHash('md5').update(hmac).digest('hex');
 
-        return {md5: md5, headerCa: headerCa};
+        return { md5: md5, headerCa: headerCa };
     }
 
     async getSignHeader(apiUrl, method, body, oldHeader, signToken, timestamp) {
-        let header = {...oldHeader};
+        let header = { ...oldHeader };
         const urlParsed = new url.URL(apiUrl);
 
         let bodyOrQuery = method.toLowerCase() === 'get'
@@ -66,7 +66,7 @@ class Skland {
 
         header['sign'] = sign;
 
-        header = {...header, ...headerCa};
+        header = { ...header, ...headerCa };
 
         return header;
     }
@@ -77,7 +77,7 @@ class Skland {
         };
 
         try {
-            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
+            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
 
             return response.data.data.code;
         } catch (error) {
@@ -87,10 +87,10 @@ class Skland {
     }
 
     async getCredResp(grantCode) {
-        const data = {code: grantCode, kind: 1};
+        const data = { code: grantCode, kind: 1 };
 
         try {
-            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, {headers: CONSTANTS.REQUEST_HEADERS_BASE});
+            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
 
             return response.data.data;
         } catch (error) {
@@ -121,10 +121,10 @@ class Skland {
     async doSignIn(uid, credResp, bindingList) {
         let headers = CONSTANTS.REQUEST_HEADERS_BASE;
         headers.cred = credResp.cred;
-        let data = {uid, gameId: '0'};
+        let data = { uid, gameId: '0' };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return {status: false, text: `[未知] 未知 UID:${uid} 签到失败\n未绑定明日方舟角色`};
+            return { status: false, text: `[未知] 未知\nUID：${uid} 签到失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -136,29 +136,35 @@ class Skland {
             }
         }
         if (!drName || !server) {
-            return {status: false, text: `[${server ? server: '未知'}] [${drName ? drName: '未知'}] UID:${uid} 签到失败\n未找到对应UID的明日方舟角色`};
+            return {
+                status: false,
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 签到失败\n未找到对应UID的明日方舟角色`
+            };
         }
 
         function parseSignResponse(signResponse, server, drName, uid) {
             let status, text
             if (signResponse.code === 0) {
                 status = true;
-                text = `[${server}] ${drName} UID:${uid} 签到成功\n`;
+                text = `[${server}] ${drName}\nUID：${uid} 签到成功\n`;
                 let awards = signResponse.data['awards'] || [];
                 if (!awards.length) {
-                    text += `未能获取奖励列表\n`
+                    text += `未能获取奖励列表`
                 }
                 for (let award of awards) {
                     let resource = award['resource'] || {};
                     text += `奖励ID：${resource.id}\n`;
                     text += `签到奖励：${resource.name} × ${award.count}\n`;
-                    text += `类型：${resource.type} ${award.type || '<Err>'}\n`;
+                    text += `类型：${resource.type} ${award.type || '<Err>'}`;
                 }
+            } else if (signResponse.code === 10001) {
+                status = true;
+                text = `[${server}] ${drName}\nUID：${uid} 签到成功\n今日已经签到过了`;
             } else {
                 status = false;
-                text = `[${server}] ${drName} UID:${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
+                text = `[${server}] ${drName}\nUID：${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;
             }
-            return {status, text};
+            return { status, text };
         }
 
         let signedHeaders = await this.getSignHeader(CONSTANTS.SIGN_URL, 'post', data, headers, credResp.token, timestamp);
@@ -171,7 +177,7 @@ class Skland {
             if (error.response) {
                 response = error.response;
             } else {
-                return {status: false, text: `连接服务器失败：${error.message}`};
+                return { status: false, text: `连接服务器失败：${error.message}` };
             }
         }
         return parseSignResponse(response.data, server, drName, uid);
@@ -192,22 +198,61 @@ class Skland {
         }
     }
 
-    async getUserInfo(uid, token){
-        const grantCode = await this.getGrantCode(token);
-        const credResp = await this.getCredResp(grantCode);
+    async getSanity(uid, credResp, bindingList) {
         const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+        headers.cred = credResp.cred;
+        let body = { uid: uid };
         const timestamp = await this.getTimestamp();
-        const body = {uid: uid};
-        const signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
-        signedHeaders.cred = credResp.cred;
-        const response = await axios({
-            method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body
-        });
-
-        if (response.status !== 200) {
-            throw new Error('Request failed with status code ' + response.status);
+        if (!bindingList.length) {
+            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取理智失败\n未绑定明日方舟角色` };
         }
-        return response.data;
+        let drName, server;
+        for (let i of bindingList) {
+            if (i.uid === uid) {
+                drName = 'Dr.' + i['nickName'];
+                server = i['channelName'];
+                break;
+            }
+        }
+        if (!drName || !server) {
+            return {
+                isPush: false,
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+            };
+        }
+
+        async function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
+            const currentTime = Math.floor(Date.now() / 1000);
+            const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
+            let currentAp = Math.min(ap['current'] + elapsed, ap.max);
+            const key = `Yunzai:skland:pushed:${uid}`;
+            let isPush = false;
+
+            if (!await redis.get(key) && currentAp >= ap.max) {
+                isPush = await redis.set(key, 'true');
+            } else if (await redis.get(key) && currentAp < ap.max) {
+                await redis.del(key);
+            }
+
+            const text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n当前理智：${currentAp} / ${ap.max}\n恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
+
+            return { isPush, text };
+        }
+
+        let signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+        let response;
+        try {
+            response = await axios({
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+            });
+        } catch (error) {
+            if (error.response) {
+                response = error.response;
+            } else {
+                return { isPush: false, text: `连接服务器失败：${error.message}` };
+            }
+        }
+        return await parseSanityResponse(response.data, server, drName, uid);
     }
 }
 

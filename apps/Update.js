@@ -14,7 +14,7 @@ let uping = false
  * 处理插件更新
  */
 export class Update extends plugin {
-  constructor () {
+  constructor() {
     super({
       name: 'Skland-更新插件',
       event: 'message',
@@ -32,7 +32,7 @@ export class Update extends plugin {
    * rule - 更新插件
    * @returns
    */
-  async update () {
+  async update() {
     if (!this.e.isMaster) return false
 
     /** 检查是否正在更新中 */
@@ -56,7 +56,7 @@ export class Update extends plugin {
     }
   }
 
-  restart () {
+  restart() {
     new Restart(this.e).restart()
   }
 
@@ -65,7 +65,7 @@ export class Update extends plugin {
    * @param {boolean} isForce 是否为强制更新
    * @returns
    */
-  async runUpdate (isForce) {
+  async runUpdate(isForce) {
     let command = 'git -C ./plugins/skland-plugin/ pull --no-rebase'
     if (isForce) {
       command = `git -C ./plugins/skland-plugin/ checkout . && ${command}`
@@ -108,7 +108,7 @@ export class Update extends plugin {
    * @param {string} plugin 插件名称
    * @returns
    */
-  async getLog (plugin = '') {
+  async getLog(plugin = '') {
     const cm = `cd ./plugins/${plugin}/ && git log  -20 --oneline --pretty=format:"%h||[%cd]  %s" --date=format:"%m-%d %H:%M"`
 
     let logAll
@@ -149,7 +149,7 @@ export class Update extends plugin {
    * @param {string} plugin 插件名称
    * @returns
    */
-  async getcommitId (plugin = '') {
+  async getcommitId(plugin = '') {
     const cm = `git -C ./plugins/${plugin}/ rev-parse --short HEAD`
 
     let commitId = await execSync(cm, { encoding: 'utf-8' })
@@ -163,7 +163,7 @@ export class Update extends plugin {
    * @param {string} plugin 插件名称
    * @returns
    */
-  async getTime (plugin = '') {
+  async getTime(plugin = '') {
     const cm = `cd ./plugins/${plugin}/ && git log -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"`
 
     let time = ''
@@ -184,7 +184,7 @@ export class Update extends plugin {
    * @param {string} end 最后一条信息
    * @returns
    */
-  async makeForwardMsg (title, msg, end) {
+  async makeForwardMsg(title, msg, end) {
     let nickname = (this.e.bot ?? Bot).nickname
     if (this.e.isGroup) {
       let info = await (this.e.bot ?? Bot).getGroupMemberInfo(this.e.group_id, (this.e.bot ?? Bot).uin)
@@ -245,7 +245,7 @@ export class Update extends plugin {
    * @param {string} stdout
    * @returns
    */
-  async gitErr (err, stdout) {
+  async gitErr(err, stdout) {
     const msg = '更新失败！'
     const errMsg = err.toString()
     stdout = stdout.toString()
@@ -265,8 +265,8 @@ export class Update extends plugin {
     if (errMsg.includes('be overwritten by merge')) {
       await this.reply(
         msg +
-          `存在冲突：\n${errMsg}\n` +
-          '请解决冲突后再更新，或者执行#强制更新，放弃本地修改'
+        `存在冲突：\n${errMsg}\n` +
+        '请解决冲突后再更新，或者执行#强制更新，放弃本地修改'
       )
       return
     }
@@ -289,7 +289,7 @@ export class Update extends plugin {
    * @param {string} cmd git命令
    * @returns
    */
-  async execSync (cmd) {
+  async execSync(cmd) {
     return new Promise((resolve, reject) => {
       exec(cmd, { windowsHide: true }, (error, stdout, stderr) => {
         resolve({ error, stdout, stderr })
@@ -301,7 +301,7 @@ export class Update extends plugin {
    * 检查git是否安装
    * @returns
    */
-  async checkGit () {
+  async checkGit() {
     const ret = await execSync('git --version', { encoding: 'utf-8' })
     if (!ret || !ret.includes('git version')) {
       await this.reply('请先安装git')
