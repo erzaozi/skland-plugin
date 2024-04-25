@@ -52,7 +52,7 @@ export class Help extends plugin {
                     },
                     {
                         "icon": 7,
-                        "title": "#skland理智值",
+                        "title": "#skland理智",
                         "desc": "查询已绑定所有账户理智值"
                     },
                     {
@@ -68,7 +68,7 @@ export class Help extends plugin {
                     {
                         "icon": 86,
                         "title": "#skland绑定帮助",
-                        "desc": "绑定账户token教程"
+                        "desc": "绑定账户Token教程"
                     },
                     {
                         "icon": 3,
@@ -113,6 +113,7 @@ export class Help extends plugin {
             { message: '2.再次打开 https://web-api.skland.com/account/info/hg' },
             { message: '3.复制 data.content 里的值（不带两边冒号）' },
             { message: segment.image(pluginResources + '/token/Token.png') },
+            { message: '4.发送 #skland绑定xxxx 即可完成绑定(xxxx为上一步复制的值)' },
         ]
         await e.reply(Bot.makeForwardMsg(helpStep))
         return true
