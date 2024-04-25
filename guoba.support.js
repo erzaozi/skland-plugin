@@ -20,30 +20,13 @@ export function supportGuoba() {
       // 图标颜色，例：#FF0000 或 rgb(255, 0, 0)
       iconColor: '#d19f56',
       // 如果想要显示成图片，也可以填写图标路径（绝对路径）
-      iconPath: path.join(pluginRoot, 'resources/icon.png'),
+      iconPath: path.join(pluginRoot, 'resources/readme/girl.png'),
     },
     configInfo: {
       schemas: [
         {
-          field: "skland_use_web_timestamp",
-          label: "使用web时间戳",
-          bottomHelpMessage: "无法调到合适的 timestamp_delay 时使用的方案，修改之前请确保你知道这是什么",
-          component: "Switch",
-        },
-        {
-          field: "skland_timestamp_delay",
-          label: "时间戳延迟",
-          bottomHelpMessage: "针对bot所在机器调整bot生成森空岛签名时进行运算的减数，修改之前请确保你知道这是什么",
-          component: "InputNumber",
-          componentProps: {
-            min: -100,
-            max: 100,
-            step: 1,
-          },
-        },
-        {
           component: "Divider",
-          label: "Exloli 推送配置",
+          label: "Skland 推送配置",
           componentProps: {
             orientation: "left",
             plain: true,
@@ -59,11 +42,11 @@ export function supportGuoba() {
             schemas: [
               {
                 field: "push_bot",
-                label: "签到使用的Bot",
+                label: "签到使用的机器人",
                 component: "Input",
                 required: true,
                 componentProps: {
-                  placeholder: '请输入机器人账号',
+                  placeholder: '请输入机器人账号ID',
                 },
               },
               {
@@ -81,7 +64,7 @@ export function supportGuoba() {
                 component: "Input",
                 required: true,
                 componentProps: {
-                  placeholder: '请输入用户账号',
+                  placeholder: '请输入用户账号ID',
                 },
               },
             ],
@@ -97,11 +80,11 @@ export function supportGuoba() {
             schemas: [
               {
                 field: "push_bot",
-                label: "理智推送使用的Bot",
+                label: "推送使用的机器人",
                 component: "Input",
                 required: true,
                 componentProps: {
-                  placeholder: '请输入机器人账号',
+                  placeholder: '请输入机器人账号ID',
                 },
               },
               {
@@ -119,13 +102,37 @@ export function supportGuoba() {
                 component: "Input",
                 required: true,
                 componentProps: {
-                  placeholder: '请输入用户账号',
+                  placeholder: '请输入用户账号ID',
                 },
               },
             ],
           },
         },
-
+        {
+          component: "Divider",
+          label: "Skland 签名配置",
+          componentProps: {
+            orientation: "left",
+            plain: true,
+          },
+        },
+        {
+          field: "skland_use_web_timestamp",
+          label: "使用网络时间戳",
+          bottomHelpMessage: "签名时获取官网时间戳，而非本地时间戳",
+          component: "Switch",
+        },
+        {
+          field: "skland_timestamp_delay",
+          label: "时间戳延迟",
+          bottomHelpMessage: "时间戳延迟，单位为秒",
+          component: "InputNumber",
+          componentProps: {
+            min: -100,
+            max: 100,
+            step: 1,
+          },
+        },
       ],
       getConfigData() {
         let config = Config.getConfig()

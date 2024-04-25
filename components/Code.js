@@ -157,6 +157,9 @@ class Skland {
                     text += `签到奖励：${resource.name} × ${award.count}\n`;
                     text += `类型：${resource.type} ${award.type || '<Err>'}`;
                 }
+            } else if (signResponse.code === 10001) {
+                status = true;
+                text = `[${server}] ${drName}\nUID：${uid} 签到成功\n今日已经签到过了`;
             } else {
                 status = false;
                 text = `[${server}] ${drName}\nUID：${uid} 签到失败\n服务器返回以下信息：\n${signResponse.message}`;

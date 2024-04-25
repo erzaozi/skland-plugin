@@ -6,12 +6,12 @@
 
 - 一个适用于 [Yunzai 系列机器人框架](https://github.com/yhArcadia/Yunzai-Bot-plugins-index) 的明日方舟辅助插件
 
-- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满可自动推送
+- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满自动推送
 
 - **使用中遇到问题请加 QQ 群咨询：[707331865](https://qm.qq.com/q/TXTIS9KhO2)**
 
 > [!TIP]
-> 这是为开发者[CikeyQi](https://github.com/CikeyQi)提供 4090 的朋友(富哥)心心念念明日方舟插件，[CikeyQi](https://github.com/CikeyQi)在完成核心逻辑的开发后，与我一同完善了理智值推送，自动签到等功能，妈妈再也不用担心你体力溢出啦。
+> 其实这个插件去年 10 月就在写了，后来森空岛加了签名验证就咕咕咕了，这次只是填坑。[CikeyQi](https://github.com/CikeyQi)在完成核心逻辑的开发后，与我一同完善了理智值推送，自动签到等功能。妈妈再也不用担心你理智溢出啦。
 
 ## 安装插件
 
@@ -45,7 +45,7 @@ pnpm install --filter=skland-plugin
 
 - [x] 森空岛签到
 - [x] 理智值提醒
-- [x] token 失效提醒并自动删除
+- [x] Token 失效提醒并自动删除
 
 ## 支持与贡献
 

@@ -1,4 +1,5 @@
 import plugin from '../../../lib/plugins/plugin.js';
+import { pluginResources } from '../model/path.js';
 
 export class Help extends plugin {
     constructor() {
@@ -36,10 +37,10 @@ export class Help extends plugin {
     }
     async bindHelp(e) {
         const helpStep = [
-            { message: '1.浏览器打开https://www.skland.com登录账号' },
-            { message: '2.打开https://web-api.skland.com/account/info/hg' },
-            { message: '3.复制data.content里的值' },
-            { message: segment.image('https://gchat.qpic.cn/gchatpic_new/166741303/674492896-2241515058-2C1530E5F1040ACDD029926D5F83DEB6/0?term=2') }
+            { message: '1.浏览器打开 https://www.skland.com 登录账号' },
+            { message: '2.再次打开 https://web-api.skland.com/account/info/hg' },
+            { message: '3.复制 data.content 里的值（不带两边冒号）' },
+            { message: segment.image(pluginResources + '/token/Token.png') },
         ]
         await e.reply(Bot.makeForwardMsg(helpStep))
         return true
