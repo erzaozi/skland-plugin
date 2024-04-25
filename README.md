@@ -47,6 +47,9 @@ pnpm install --filter=skland-plugin
 - [x] 理智值提醒
 - [x] Token 失效提醒并自动删除
 
+> [!IMPORTANT]
+> 插件开发者因为自身情况无法完善更多信息获取（开发者中没人熟悉这个游戏，获取到的数据每个值不清楚什么意义，也不知道从哪获取资源文件），如果你有代码基础并乐意完善本插件功能，可以给我们提交 [Pull requests](https://github.com/erzaozi/skland-plugin/pulls)，与官方 API 接口交互相关代码在 `components/Code.js` 中
+
 ## 支持与贡献
 
 如果你喜欢这个项目，请不妨点个 Star🌟，这是对开发者最大的动力， 当然，你可以对我 [爱发电](https://afdian.net/a/sumoqi) 赞助，呜咪~❤️
