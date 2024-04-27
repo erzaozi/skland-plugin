@@ -33,8 +33,12 @@ class Skland {
     async getTimestamp() {
         let config = await Config.getConfig()
         if (config['skland_use_web_timestamp']) {
-            const response = await axios.get(CONSTANTS.BINDING_URL);
-            return response.data.timestamp;
+            try {
+                const response = await axios.get(CONSTANTS.BINDING_URL);
+                return response.data.timestamp;
+            } catch (error) {
+                return error.response.data.timestamp;
+            }
         } else {
             return String(Math.floor(Date.now() / 1000) - config['skland_timestamp_delay']);
         }
