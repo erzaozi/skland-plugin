@@ -2,12 +2,6 @@ import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
-import { pluginResources } from '../model/path.js';
-import fs from 'fs';
-
-const RESOURCES = {
-    OPERATOR: JSON.parse(fs.readFileSync(pluginResources + '/gameData/operator.json', 'utf-8'))
-}
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -231,7 +225,7 @@ class Skland {
             };
         }
 
-        async function parseSanityResponse({ data: { currentTs, status: { ap }, recruit, building: { hire, training }, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { currentTs, status: { ap }, recruit, building: { hire, training }, charInfoMap, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
             let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
             // 理智
             const currentTime = currentTs;
@@ -270,7 +264,7 @@ class Skland {
 
             // 训练室
             if (training && training['trainee']) {
-                let charName = RESOURCES.OPERATOR[training['trainee']['charId']]['zh_CN']
+                let charName = charInfoMap[training['trainee']['charId']]['name']
                 let remainSecs = training['remainSecs']
                 if (remainSecs === -1) {
                     text += `训练室：${charName}\n设备空闲中\n\n`;
