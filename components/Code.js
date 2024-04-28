@@ -231,7 +231,7 @@ class Skland {
             };
         }
 
-        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire, training }, campaign: { reward } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire, training }, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
             let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
             // 理智
             const currentTime = Math.floor(Date.now() / 1000);
@@ -255,7 +255,7 @@ class Skland {
                     finishTs = recruit[i]['finishTs'];
                 }
             }
-            text += `公开招募：${recruit.length - finishRecruitTask} / ${recruit.length}\n${finishTs === -1 ? '招募已全部完成' : `${await formatTime(finishTs - currentTime)}后全部完成`}\n\n`;
+            text += `公开招募：${recruit.length - finishRecruitTask} / ${recruit.length}\n${finishTs === -1 ? '可进行公开招募标签刷新' : `${await formatTime(finishTs - currentTime)}后全部完成`}\n\n`;
 
             // 公招刷新
             if (hire) {
@@ -282,16 +282,22 @@ class Skland {
             }
 
             // 每周报酬合成玉
-            const nextRewardTime = Math.floor((new Date().setHours(4,0,0,0) + (8 - new Date().getDay()) % 7 * 86400000) / 1000)
-            text += `每周报酬合成玉：${reward.current} / ${reward.total}\n${await formatTime(nextRewardTime - currentTime)}后刷新\n\n`;
+            const nextRewardTime = Math.floor((new Date().setHours(4, 0, 0, 0) + (8 - new Date().getDay()) % 7 * 86400000) / 1000)
+            text += `每周报酬合成玉：${reward['current']} / ${reward.total}\n${await formatTime(nextRewardTime - currentTime)}后刷新\n\n`;
 
             // 每日任务
+            const nextDailyTaskTime = Math.floor((new Date().getHours() >= 4 ? new Date(new Date().setDate(new Date().getDate() + 1)).setHours(4, 0, 0, 0) : new Date().setHours(4, 0, 0, 0)) / 1000)
+            text += `每日任务：${daily['current']} / ${daily.total}\n${await formatTime(nextDailyTaskTime - currentTime)}后刷新\n\n`;
 
             // 每周任务
+            const nextWeeklyTaskTime = Math.floor((new Date().setHours(4, 0, 0, 0) + 86400000 * 7) / 1000)
+            text += `每周任务：${weekly['current']} / ${weekly.total}\n${await formatTime(nextWeeklyTaskTime - currentTime)}后刷新\n\n`;
 
             // 数据增补仪
+            text += `数据增补仪：${higherItem['current']} / ${higherItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
 
             // 数据增补条
+            text += `数据增补条：${lowerItem['current']} / ${lowerItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
 
             async function formatTime(timestamp) {
                 const days = Math.floor(timestamp / 86400);

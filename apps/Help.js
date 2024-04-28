@@ -52,8 +52,8 @@ export class Help extends plugin {
                     },
                     {
                         "icon": 7,
-                        "title": "#skland理智",
-                        "desc": "查询已绑定所有账户理智值"
+                        "title": "#skland实时数据",
+                        "desc": "查询已绑定所有账户实时数据"
                     },
                     {
                         "icon": 11,
