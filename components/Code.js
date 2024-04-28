@@ -231,7 +231,7 @@ class Skland {
             };
         }
 
-        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire }, campaign: { reward } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire, training }, campaign: { reward } } }, server, drName, uid) {
             let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
             // 理智
             const currentTime = Math.floor(Date.now() / 1000);
@@ -269,6 +269,17 @@ class Skland {
             }
 
             // 训练室
+            if (training && training['trainee']) {
+                let charName = RESOURCES.OPERATOR[training['trainee']['charId']]['zh_CN']
+                let remainSecs = training['remainSecs']
+                if (remainSecs === -1) {
+                    text += `训练室：${charName}\n设备空闲中\n\n`;
+                } else {
+                    text += `训练室：${charName}\n${await formatTime(remainSecs)}后完成专精\n\n`;
+                }
+            } else {
+                text += `训练室：空闲中\n\n`;
+            }
 
             // 每周报酬合成玉
             const nextRewardTime = Math.floor((new Date().setHours(4,0,0,0) + (8 - new Date().getDay()) % 7 * 86400000) / 1000)
