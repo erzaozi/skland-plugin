@@ -2,6 +2,12 @@ import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
+import { pluginResources } from '../model/path.js';
+import fs from 'fs';
+
+const RESOURCES = {
+    OPERATOR: JSON.parse(fs.readFileSync(pluginResources + '/gameData/operator.json', 'utf-8'))
+}
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -208,7 +214,7 @@ class Skland {
         let body = { uid: uid };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取理智失败\n未绑定明日方舟角色` };
+            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -221,24 +227,68 @@ class Skland {
         if (!drName || !server) {
             return {
                 isPush: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`
             };
         }
 
-        async function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire }, campaign: { reward } } }, server, drName, uid) {
+            let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
+            // 理智
             const currentTime = Math.floor(Date.now() / 1000);
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
             const key = `Yunzai:skland:pushed:${uid}`;
             let isPush = false;
-
             if (!await redis.get(key) && currentAp >= ap.max) {
                 isPush = await redis.set(key, 'true');
             } else if (await redis.get(key) && currentAp < ap.max) {
                 await redis.del(key);
             }
+            text += `当前理智：${currentAp} / ${ap.max}\n${currentAp >= ap.max ? '理智已全部恢复' : `${await formatTime(ap['completeRecoveryTime'] - currentTime)}后全部恢复`}\n\n`;
 
-            const text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n当前理智：${currentAp} / ${ap.max}\n恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
+            // 公开招募
+            const recruitTask = recruit.map(task => task.state);
+            const finishRecruitTask = recruitTask.filter(state => state === 2).length;
+            let finishTs = -1;
+            for (let i = 0; i < recruit.length; i++) {
+                if (finishTs < recruit[i]['finishTs']) {
+                    finishTs = recruit[i]['finishTs'];
+                }
+            }
+            text += `公开招募：${recruit.length - finishRecruitTask} / ${recruit.length}\n${finishTs === -1 ? '招募已全部完成' : `${await formatTime(finishTs - currentTime)}后全部完成`}\n\n`;
+
+            // 公招刷新
+            if (hire) {
+                if (hire['refreshCount'] === 0) {
+                    text += `公招刷新：联络中\n${await formatTime(hire['completeWorkTime'] - currentTime)}后获取刷新次数\n\n`;
+                } else {
+                    text += `公招刷新：可刷新\n可进行公开招募刷新\n\n`;
+                }
+            } else {
+                text += `公招刷新：暂无数据\n\n`;
+            }
+
+            // 训练室
+
+            // 每周报酬合成玉
+            const nextRewardTime = Math.floor((new Date().setHours(4,0,0,0) + (8 - new Date().getDay()) % 7 * 86400000) / 1000)
+            text += `每周报酬合成玉：${reward.current} / ${reward.total}\n${await formatTime(nextRewardTime - currentTime)}后刷新\n\n`;
+
+            // 每日任务
+
+            // 每周任务
+
+            // 数据增补仪
+
+            // 数据增补条
+
+            async function formatTime(timestamp) {
+                const days = Math.floor(timestamp / 86400);
+                const hours = Math.floor(timestamp / 3600) % 24;
+                const minutes = Math.floor(timestamp / 60) % 60;
+
+                return (days ? days + '天' : '') + (hours ? hours + '小时' : '') + minutes + '分钟';
+            }
 
             return { isPush, text };
         }
