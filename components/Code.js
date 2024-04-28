@@ -231,10 +231,10 @@ class Skland {
             };
         }
 
-        async function parseSanityResponse({ data: { status: { ap }, recruit, building: { hire, training }, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
+        async function parseSanityResponse({ data: { currentTs, status: { ap }, recruit, building: { hire, training }, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
             let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
             // 理智
-            const currentTime = Math.floor(Date.now() / 1000);
+            const currentTime = currentTs;
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
             const key = `Yunzai:skland:pushed:${uid}`;
