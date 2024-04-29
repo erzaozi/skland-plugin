@@ -5,7 +5,7 @@ import Config from "../components/Config.js";
 export class Sanity extends plugin {
     constructor() {
         super({
-            name: "Skland-理智查询",
+            name: "Skland-实时数据",
             event: "message",
             priority: 1009,
             rule: [
@@ -19,7 +19,7 @@ export class Sanity extends plugin {
             name: '[Skland-Plugin] 理智推送',
             fnc: () => this.autoPush(),
             cron: '*/7 * * * *',
-            log: true
+            log: false
         }
     }
 
