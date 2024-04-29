@@ -241,39 +241,20 @@ class Skland {
             text += `当前理智：${currentAp} / ${ap.max}\n${currentAp >= ap.max ? '理智已全部恢复' : `${await formatTime(ap['completeRecoveryTime'] - currentTime)}后全部恢复`}\n\n`;
 
             // 公开招募
-            const recruitTask = recruit.map(task => task.state);
-            const finishRecruitTask = recruitTask.filter(state => state === 2).length;
-            let finishTs = -1;
-            for (let i = 0; i < recruit.length; i++) {
-                if (finishTs < recruit[i]['finishTs']) {
-                    finishTs = recruit[i]['finishTs'];
-                }
-            }
-            text += `公开招募：${recruit.length - finishRecruitTask} / ${recruit.length}\n${finishTs === -1 ? '招募已全部完成' : `${await formatTime(finishTs - currentTime)}后全部完成`}\n\n`;
+            let finishedTasks = recruit.filter(r => r['finishTs'] > currentTime).length;
+            let lastFinishTs = recruit.reduce((max, r) => r['finishTs'] > currentTime && r['finishTs'] > max ? r['finishTs'] : max, -1);
+            text += `公开招募：${recruit.length - finishedTasks} / ${recruit.length}\n${lastFinishTs === -1 ? '招募已全部完成' : `${await formatTime(lastFinishTs - currentTime)}后全部完成`}\n\n`;
 
             // 公招刷新
-            if (hire) {
-                if (hire['refreshCount'] === 0) {
-                    text += `公招刷新：联络中\n${await formatTime(hire['completeWorkTime'] - currentTime)}后获取刷新次数\n\n`;
-                } else {
-                    text += `公招刷新：可刷新\n可进行公开招募刷新\n\n`;
-                }
-            } else {
-                text += `公招刷新：暂无数据\n\n`;
-            }
+            text += hire ? (hire['state'] === 0 ? `公招刷新：联络暂停\n\n` : (hire['state'] === 1 ? `公招刷新：联络中\n${await formatTime(hire['completeWorkTime'] - currentTime)}后获取刷新次数\n\n` : `公招刷新：可刷新\n可进行公开招募刷新\n\n`)) : `公招刷新：暂无数据\n\n`;
 
             // 训练室
-            if (training && training['trainee']) {
-                let charName = charInfoMap[training['trainee']['charId']]['name']
-                let remainSecs = training['remainSecs']
-                if (remainSecs === -1) {
-                    text += `训练室：${charName}\n设备空闲中\n\n`;
-                } else {
-                    text += `训练室：${charName}\n${await formatTime(remainSecs)}后完成专精\n\n`;
-                }
-            } else {
-                text += `训练室：空闲中\n\n`;
-            }
+            text += training && training['trainee'] 
+            ? `训练室：${charInfoMap[training['trainee']['charId']]['name']}\n`
+                + (training['remainSecs'] <= 0
+                    ? `已完成专精，设备空闲中\n\n`
+                    : `${await formatTime(training['remainSecs'])}后完成专精\n\n`)
+            : `训练室：空闲中\n\n`;
 
             // 每周报酬合成玉
             const nextRewardTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
