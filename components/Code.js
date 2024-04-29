@@ -208,7 +208,7 @@ class Skland {
         let body = { uid: uid };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取理智失败\n未绑定明日方舟角色` };
+            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色` };
         }
         let drName, server;
         for (let i of bindingList) {
@@ -221,24 +221,66 @@ class Skland {
         if (!drName || !server) {
             return {
                 isPush: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取理智失败\n未找到对应UID的明日方舟角色`
+                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`
             };
         }
 
-        async function parseSanityResponse({ data: { status: { ap } } }, server, drName, uid) {
-            const currentTime = Math.floor(Date.now() / 1000);
+        async function parseSanityResponse({ data: { currentTs, status: { ap }, recruit, building: { hire, training }, charInfoMap, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
+            let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
+            // 理智
+            const currentTime = currentTs;
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
             const key = `Yunzai:skland:pushed:${uid}`;
             let isPush = false;
-
             if (!await redis.get(key) && currentAp >= ap.max) {
                 isPush = await redis.set(key, 'true');
             } else if (await redis.get(key) && currentAp < ap.max) {
                 await redis.del(key);
             }
+            text += `当前理智：${currentAp} / ${ap.max}\n${currentAp >= ap.max ? '理智已全部恢复' : `${await formatTime(ap['completeRecoveryTime'] - currentTime)}后全部恢复`}\n\n`;
 
-            const text = `[${server}] ${drName}\nUID：${uid} 获取理智成功\n当前理智：${currentAp} / ${ap.max}\n恢复时间：${new Date(ap['completeRecoveryTime'] * 1000).toLocaleString()}`;
+            // 公开招募
+            let finishedTasks = recruit.filter(r => r['finishTs'] > currentTime).length;
+            let lastFinishTs = recruit.reduce((max, r) => r['finishTs'] > currentTime && r['finishTs'] > max ? r['finishTs'] : max, -1);
+            text += `公开招募：${recruit.length - finishedTasks} / ${recruit.length}\n${lastFinishTs === -1 ? '招募已全部完成' : `${await formatTime(lastFinishTs - currentTime)}后全部完成`}\n\n`;
+
+            // 公招刷新
+            text += hire ? (hire['state'] === 0 ? `公招刷新：联络暂停\n\n` : (hire['state'] === 1 ? `公招刷新：联络中\n${await formatTime(hire['completeWorkTime'] - currentTime)}后获取刷新次数\n\n` : `公招刷新：可刷新\n可进行公开招募刷新\n\n`)) : `公招刷新：暂无数据\n\n`;
+
+            // 训练室
+            text += training && training['trainee'] 
+            ? `训练室：${charInfoMap[training['trainee']['charId']]['name']}\n`
+                + (training['remainSecs'] <= 0
+                    ? `已完成专精，设备空闲中\n\n`
+                    : `${await formatTime(training['remainSecs'])}后完成专精\n\n`)
+            : `训练室：空闲中\n\n`;
+
+            // 每周报酬合成玉
+            const nextRewardTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
+            text += `每周报酬合成玉：${reward['current']} / ${reward.total}\n${await formatTime(nextRewardTime - currentTime)}后刷新\n\n`;
+
+            // 每日任务
+            const nextDailyTaskTime = Math.floor((new Date().getHours() >= 4 ? new Date(new Date().setDate(new Date().getDate() + 1)).setHours(4, 0, 0, 0) : new Date().setHours(4, 0, 0, 0)) / 1000)
+            text += `每日任务：${daily['current']} / ${daily.total}\n${await formatTime(nextDailyTaskTime - currentTime)}后刷新\n\n`;
+
+            // 每周任务
+            const nextWeeklyTaskTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
+            text += `每周任务：${weekly['current']} / ${weekly.total}\n${await formatTime(nextWeeklyTaskTime - currentTime)}后刷新\n\n`;
+
+            // 数据增补仪
+            text += `数据增补仪：${higherItem['current']} / ${higherItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
+
+            // 数据增补条
+            text += `数据增补条：${lowerItem['current']} / ${lowerItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
+
+            async function formatTime(timestamp) {
+                const days = Math.floor(timestamp / 86400);
+                const hours = Math.floor(timestamp / 3600) % 24;
+                const minutes = Math.floor(timestamp / 60) % 60;
+
+                return (days ? days + '天' : '') + (hours ? hours + '小时' : '') + minutes + '分钟';
+            }
 
             return { isPush, text };
         }
