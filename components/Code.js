@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
-import fs from 'fs';
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -317,7 +316,6 @@ class Skland {
                 return { isPush: false, text: `连接服务器失败：${error.message}` };
             }
         }
-        fs.writeFileSync('skland.json', JSON.stringify(response.data, null, 2))
         return await parseSanityResponse(response.data, server, drName, uid);
     }
 }
