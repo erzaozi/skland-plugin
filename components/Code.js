@@ -251,18 +251,18 @@ class Skland {
                     hire['refreshCount'] = Math.min(hire['refreshCount'] + 1, 3);
                 }
 
-                text += hire['state'] === 0 ? '公招刷新：联络暂停'
-                    : hire['state'] === 1 && hire['refreshCount'] < 3 ? '公招刷新：联络中'
-                        : hire['state'] === 1 && hire['refreshCount'] === 3 ? '公招刷新：可刷新'
-                            : '公招刷新：暂无数据';
+                text += hire['state'] === 0 ? '公招刷新：联络暂停\n'
+                    : hire['state'] === 1 && hire['refreshCount'] < 3 ? '公招刷新：联络中\n'
+                        : hire['state'] === 1 && hire['refreshCount'] === 3 ? '公招刷新：可刷新\n'
+                            : '公招刷新：暂无数据\n';
 
                 if (hire['refreshCount'] > 0) {
-                    text += `\n可进行${hire['refreshCount']}次公开招募刷新`;
+                    text += `可进行${hire['refreshCount']}次公开招募刷新\n`;
                 }
                 if (hire['refreshCount'] < 3 && hire['completeWorkTime'] - currentTime > 0) {
-                    text += `，${await formatTime(hire['completeWorkTime'] - currentTime)}后刷新次数\n\n`;
+                    text += `${await formatTime(hire['completeWorkTime'] - currentTime)}后刷新次数\n\n`;
                 } else {
-                    text += `\n\n`;
+                    text += `\n`;
                 }
             } else {
                 text += `公招刷新：暂无数据\n\n`;
