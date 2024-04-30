@@ -247,12 +247,14 @@ class Skland {
 
             // 公招刷新
             if (hire) {
-                text += `公招刷新：` + (hire['state'] === 0 ? '联络暂停' :
-                    hire['state'] === 1 ? '联络中' : '可刷新');
-
                 if (hire['completeWorkTime'] - currentTime < 0) {
                     hire['refreshCount'] = Math.min(hire['refreshCount'] + 1, 3);
                 }
+
+                text += hire['state'] === 0 ? '公招刷新：联络暂停'
+                    : hire['state'] === 1 && hire['refreshCount'] < 3 ? '公招刷新：联络中'
+                        : hire['state'] === 1 && hire['refreshCount'] === 3 ? '公招刷新：可刷新'
+                            : '公招刷新：暂无数据';
 
                 if (hire['refreshCount'] > 0) {
                     text += `\n可进行${hire['refreshCount']}次公开招募刷新`;
