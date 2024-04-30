@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
+import fs from 'fs';
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -246,15 +247,33 @@ class Skland {
             text += `公开招募：${recruit.length - finishedTasks} / ${recruit.length}\n${lastFinishTs === -1 ? '招募已全部完成' : `${await formatTime(lastFinishTs - currentTime)}后全部完成`}\n\n`;
 
             // 公招刷新
-            text += hire ? (hire['state'] === 0 ? `公招刷新：联络暂停\n\n` : (hire['state'] === 1 ? `公招刷新：联络中\n${await formatTime(hire['completeWorkTime'] - currentTime)}后获取刷新次数\n\n` : `公招刷新：可刷新\n可进行公开招募刷新\n\n`)) : `公招刷新：暂无数据\n\n`;
+            if (hire) {
+                text += `公招刷新：` + (hire['state'] === 0 ? '联络暂停' :
+                    hire['state'] === 1 ? '联络中' : '可刷新');
+
+                if (hire['completeWorkTime'] - currentTime < 0) {
+                    hire['refreshCount'] = Math.min(hire['refreshCount'] + 1, 3);
+                }
+
+                if (hire['refreshCount'] > 0) {
+                    text += `\n可进行${hire['refreshCount']}次公开招募刷新`;
+                }
+                if (hire['refreshCount'] < 3 && hire['completeWorkTime'] - currentTime > 0) {
+                    text += `，${await formatTime(hire['completeWorkTime'] - currentTime)}后刷新次数\n\n`;
+                } else {
+                    text += `\n\n`;
+                }
+            } else {
+                text += `公招刷新：暂无数据\n\n`;
+            }
 
             // 训练室
-            text += training && training['trainee'] 
-            ? `训练室：${charInfoMap[training['trainee']['charId']]['name']}\n`
+            text += training && training['trainee']
+                ? `训练室：${charInfoMap[training['trainee']['charId']]['name']}\n`
                 + (training['remainSecs'] <= 0
                     ? `已完成专精，设备空闲中\n\n`
                     : `${await formatTime(training['remainSecs'])}后完成专精\n\n`)
-            : `训练室：空闲中\n\n`;
+                : `训练室：空闲中\n\n`;
 
             // 每周报酬合成玉
             const nextRewardTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
@@ -298,6 +317,7 @@ class Skland {
                 return { isPush: false, text: `连接服务器失败：${error.message}` };
             }
         }
+        fs.writeFileSync('skland.json', JSON.stringify(response.data, null, 2))
         return await parseSanityResponse(response.data, server, drName, uid);
     }
 }
