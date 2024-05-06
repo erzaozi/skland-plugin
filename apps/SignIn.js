@@ -95,6 +95,8 @@ export class SignIn extends plugin {
             const cfg = (await import("../../../lib/config/config.js")).default
             Bot.sendMasterMsg = async m => { for (const i of cfg.masterQQ) await Bot.pickFriend(i).sendMsg(m) }
         }
-        Bot.sendMasterMsg?.(`[Skland-Plugin] 自动签到\n今日成功签到 ${successNumber} 个账号`)
+        if (autoSignInList.length) {
+            Bot.sendMasterMsg?.(`[Skland-Plugin] 自动签到\n今日成功签到 ${successNumber} 个账号`)
+        }
     }
 }
