@@ -1,7 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import Skland from "../components/Code.js";
 import Config from "../components/Config.js";
-import { Help } from './Help.js';
 
 export class BindToken extends plugin {
     constructor() {

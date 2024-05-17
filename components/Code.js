@@ -3,6 +3,7 @@ import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
 import Render from '../model/render.js'
+import { fstat } from 'fs';
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -209,7 +210,11 @@ class Skland {
         let body = { uid: uid };
         const timestamp = await this.getTimestamp();
         if (!bindingList.length) {
-            return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色` };
+            if (reImg) {
+                return `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色`;
+            } else {
+                return { isPush: false, text: `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色` };
+            }
         }
         let drName, server;
         for (let i of bindingList) {
@@ -220,10 +225,11 @@ class Skland {
             }
         }
         if (!drName || !server) {
-            return {
-                isPush: false,
-                text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`
-            };
+            if (reImg) {
+                return `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`;
+            } else {
+                return { isPush: false, text: `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色` };
+            }
         }
 
         async function parseSanityResponse({ data: { currentTs, status: { ap } } }, drName, uid) {
@@ -254,7 +260,11 @@ class Skland {
             if (error.response) {
                 response = error.response;
             } else {
-                return { isPush: false, text: `连接服务器失败：${error.message}` };
+                if (reImg) {
+                    return `连接服务器失败：${error.message}`;
+                } else {
+                    return { isPush: false, text: `连接服务器失败：${error.message}` };
+                }
             }
         }
 
@@ -263,6 +273,43 @@ class Skland {
         } else {
             return await parseSanityResponse(response.data, drName, uid);
         }
+    }
+
+    async getUser(uid, credResp, bindingList) {
+        const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+        headers.cred = credResp.cred;
+        let body = { uid: uid };
+        const timestamp = await this.getTimestamp();
+        if (!bindingList.length) {
+            return `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色`;
+        }
+        let drName, server;
+        for (let i of bindingList) {
+            if (i.uid === uid) {
+                drName = 'Dr.' + i['nickName'];
+                server = i['channelName'];
+                break;
+            }
+        }
+        if (!drName || !server) {
+            return `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`;
+        }
+
+        let signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+        let response;
+        try {
+            response = await axios({
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+            });
+        } catch (error) {
+            if (error.response) {
+                response = error.response;
+            } else {
+                return `连接服务器失败：${error.message}`
+            }
+        }
+
+        return await Render.userInfoData(response.data);
     }
 }
 

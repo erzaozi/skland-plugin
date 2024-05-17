@@ -1,5 +1,5 @@
 import puppeteer from '../../../lib/puppeteer/puppeteer.js'
-import plugin from '../../miao-plugin/components/common/Plugin.js'
+import fs from 'fs'
 import { pluginResources } from './path.js'
 
 class Render {
@@ -38,13 +38,13 @@ class Render {
             }
 
             if (hire['state'] === 0) {
-                data.hire.now = '联络暂停' 
+                data.hire.now = '联络暂停'
             } else if (hire['state'] === 1 && hire['refreshCount'] < 3) {
                 data.hire.now = '联络中'
             } else if (hire['state'] === 1 && hire['refreshCount'] === 3) {
                 data.hire.now = '可刷新'
             } else {
-                data.hire.now = '暂无数据' 
+                data.hire.now = '暂无数据'
             }
 
             if (hire['refreshCount'] < 3 && hire['completeWorkTime'] - currentTime > 0) {
@@ -65,7 +65,7 @@ class Render {
             if (training['remainSecs'] <= 0) {
                 data.training.now = '空闲中';
                 data.training.max = ''
-                data.training.tip = '已完成';
+                data.training.tip = '专精 已完成';
             } else {
                 data.training.now = charInfoMap[training['trainee']['charId']]['name']
                 data.training.max = ''
@@ -127,6 +127,36 @@ class Render {
 
             return (days ? days + '天' : '') + (hours ? hours + '小时' : '') + minutes + '分钟';
         }
+    }
+
+    async userInfoData({ data: { status: { registerTs, name, mainStageProgress }, building: { furniture }, chars } }) {
+        const data = {}
+
+        // 注册时间
+        data.registerTs = new Date(registerTs * 1000).toLocaleDateString().replace(/\//g, '-')
+
+        // 游戏昵称
+        data.name = 'Dr.' + name
+
+        // 作战进度
+        let levels = JSON.parse(fs.readFileSync(pluginResources + '/gamedata/levels.json', 'utf8'))
+        data.mainStageProgress = levels[mainStageProgress] || ''
+
+        // 家具保有
+        data.furniture = furniture.total
+
+        // 干员数量
+        data.chars = chars.length
+
+        const base64 = await puppeteer.screenshot('skland-plugin', {
+            saveId: 'userInfoData',
+            imgType: 'png',
+            tplFile: `${pluginResources}/template/card.html`,
+            pluginResources,
+            data: data
+        })
+
+        return base64
     }
 }
 
