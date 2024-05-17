@@ -13,7 +13,7 @@ export class Setting extends plugin {
                     fnc: "setAutoSign"
                 },
                 {
-                    reg: "^#?(skland|(明日)?方舟)(开启|关闭)理智推送$",
+                    reg: "^#?(skland|(明日)?方舟)(开启|关闭)(理智)?推送$",
                     fnc: "setAutoPush"
                 }
             ]
