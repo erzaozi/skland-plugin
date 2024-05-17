@@ -56,16 +56,17 @@ pnpm install --filter=skland-plugin
 
 <details><summary>点击展开</summary>
 
-| 命令                   | 功能                       | 示例                                                                                           |
-| ---------------------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
-| #方舟绑定              | 绑定账户 Token             | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bind.png)     |
-| #方舟解绑              | 解除绑定账户               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)   |
-| ##方舟绑定帮助         | 绑定账户 Token 教程        | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png) |
-| #方舟信息              | 获取用户卡片               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)   |
-| #方舟签到              | 执行已绑定所有账户签到     | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)   |
-| #方舟开启/关闭自动签到 | 解除绑定账户               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/uautosignin.png)   |
-| #方舟理智              | 查询已绑定所有账户实时数据 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)   |
-| #方舟开启/关闭理智推送 | 理智值回满提醒             | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png)   |
+| 命令                   | 功能                         | 示例                                                                                              |
+| ---------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| #方舟绑定              | 绑定账户 Token               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bind.png)        |
+| #方舟解绑              | 解除绑定账户                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)      |
+| ##方舟绑定帮助         | 绑定账户 Token 教程          | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png)    |
+| #方舟信息              | 获取用户卡片                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)        |
+| #方舟签到              | 执行已绑定所有账户签到       | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)      |
+| #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
+| #方舟理智              | 查询已绑定所有账户实时数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)      |
+| #方舟开启/关闭理智推送 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png)  |
+
 
 
 </details>
