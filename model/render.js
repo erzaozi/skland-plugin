@@ -63,9 +63,9 @@ class Render {
         data.training = {}
         if (training && training['trainee']) {
             if (training['remainSecs'] <= 0) {
-                data.training.now = '空闲中';
+                data.training.now = charInfoMap[training['trainee']['charId']]['name']
                 data.training.max = ''
-                data.training.tip = '专精 已完成';
+                data.training.tip = '设备空闲中';
             } else {
                 data.training.now = charInfoMap[training['trainee']['charId']]['name']
                 data.training.max = ''
