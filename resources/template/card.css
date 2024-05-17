@@ -1,0 +1,67 @@
+@font-face {
+    font-family: "HYQiHei";
+    src: url("./fonts/HYQiHei_75S.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+#body {
+    width: 1284px;
+    height: 1776px;
+    background-image: url("./imgs/card.png");
+    background-repeat: no-repeat;
+    font-family: "HYQiHei";
+}
+
+#hiredate {
+    position: absolute;
+    top: 479px;
+    left: 72px;
+    width: 440px;
+    height: 66px;
+    font-size: 42px;
+}
+
+#name {
+    position: absolute;
+    top: 768px;
+    left: 72px;
+    font-size: 64px;
+    color: #fff;
+}
+
+#progress {
+    position: absolute;
+    top: 1006px;
+    left: 264px;
+    font-size: 120px;
+    color: #fff;
+}
+
+#progress > img{
+    position: relative;
+    top: 20px;
+}
+
+#furniture{
+    position: absolute;
+    top: 1340px;
+    left: 72px;
+    font-size: 36px;
+    color: #fff;
+}
+
+#hired{
+    position: absolute;
+    top: 1514px;
+    left: 72px;
+    font-size: 70px;
+    color: #fff;
+}

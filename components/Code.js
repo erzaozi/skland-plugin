@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
 import Config from './Config.js'
+import Render from '../model/render.js'
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
@@ -202,7 +203,7 @@ class Skland {
         }
     }
 
-    async getSanity(uid, credResp, bindingList) {
+    async getSanity(uid, credResp, bindingList, reImg = false) {
         const headers = CONSTANTS.REQUEST_HEADERS_BASE;
         headers.cred = credResp.cred;
         let body = { uid: uid };
@@ -225,9 +226,8 @@ class Skland {
             };
         }
 
-        async function parseSanityResponse({ data: { currentTs, status: { ap }, recruit, building: { hire, training }, charInfoMap, campaign: { reward }, routine: { daily, weekly }, tower: { reward: { higherItem, lowerItem, termTs } } } }, server, drName, uid) {
-            let text = `[${server}] ${drName}\nUID：${uid} 获取实时数据成功\n\n`
-            // 理智
+        async function parseSanityResponse({ data: { currentTs, status: { ap } } }, drName, uid) {
+
             const currentTime = currentTs;
             const elapsed = Math.floor((currentTime - ap['lastApAddTime']) / 360);
             let currentAp = Math.min(ap['current'] + elapsed, ap.max);
@@ -238,69 +238,8 @@ class Skland {
             } else if (await redis.get(key) && currentAp < ap.max) {
                 await redis.del(key);
             }
-            text += `当前理智：${currentAp} / ${ap.max}\n${currentAp >= ap.max ? '理智已全部恢复' : `${await formatTime(ap['completeRecoveryTime'] - currentTime)}后全部恢复`}\n\n`;
 
-            // 公开招募
-            let finishedTasks = recruit.filter(r => r['finishTs'] > currentTime).length;
-            let lastFinishTs = recruit.reduce((max, r) => r['finishTs'] > currentTime && r['finishTs'] > max ? r['finishTs'] : max, -1);
-            text += `公开招募：${recruit.length - finishedTasks} / ${recruit.length}\n${lastFinishTs === -1 ? '招募已全部完成' : `${await formatTime(lastFinishTs - currentTime)}后全部完成`}\n\n`;
-
-            // 公招刷新
-            if (hire) {
-                if (hire['completeWorkTime'] - currentTime < 0) {
-                    hire['refreshCount'] = Math.min(hire['refreshCount'] + 1, 3);
-                }
-
-                text += hire['state'] === 0 ? '公招刷新：联络暂停\n'
-                    : hire['state'] === 1 && hire['refreshCount'] < 3 ? '公招刷新：联络中\n'
-                        : hire['state'] === 1 && hire['refreshCount'] === 3 ? '公招刷新：可刷新\n'
-                            : '公招刷新：暂无数据\n';
-
-                if (hire['refreshCount'] > 0) {
-                    text += `可进行${hire['refreshCount']}次公开招募刷新\n`;
-                }
-                if (hire['refreshCount'] < 3 && hire['completeWorkTime'] - currentTime > 0) {
-                    text += `${await formatTime(hire['completeWorkTime'] - currentTime)}后刷新次数\n\n`;
-                } else {
-                    text += `\n`;
-                }
-            } else {
-                text += `公招刷新：暂无数据\n\n`;
-            }
-
-            // 训练室
-            text += training && training['trainee']
-                ? `训练室：${charInfoMap[training['trainee']['charId']]['name']}\n`
-                + (training['remainSecs'] <= 0
-                    ? `已完成专精，设备空闲中\n\n`
-                    : `${await formatTime(training['remainSecs'])}后完成专精\n\n`)
-                : `训练室：空闲中\n\n`;
-
-            // 每周报酬合成玉
-            const nextRewardTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
-            text += `每周报酬合成玉：${reward['current']} / ${reward.total}\n${await formatTime(nextRewardTime - currentTime)}后刷新\n\n`;
-
-            // 每日任务
-            const nextDailyTaskTime = Math.floor((new Date().getHours() >= 4 ? new Date(new Date().setDate(new Date().getDate() + 1)).setHours(4, 0, 0, 0) : new Date().setHours(4, 0, 0, 0)) / 1000)
-            text += `每日任务：${daily['current']} / ${daily.total}\n${await formatTime(nextDailyTaskTime - currentTime)}后刷新\n\n`;
-
-            // 每周任务
-            const nextWeeklyTaskTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
-            text += `每周任务：${weekly['current']} / ${weekly.total}\n${await formatTime(nextWeeklyTaskTime - currentTime)}后刷新\n\n`;
-
-            // 数据增补仪
-            text += `数据增补仪：${higherItem['current']} / ${higherItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
-
-            // 数据增补条
-            text += `数据增补条：${lowerItem['current']} / ${lowerItem.total}\n${await formatTime(termTs - currentTime)}后刷新\n\n`;
-
-            async function formatTime(timestamp) {
-                const days = Math.floor(timestamp / 86400);
-                const hours = Math.floor(timestamp / 3600) % 24;
-                const minutes = Math.floor(timestamp / 60) % 60;
-
-                return (days ? days + '天' : '') + (hours ? hours + '小时' : '') + minutes + '分钟';
-            }
+            let text = `${drName}（${uid}）你的理智已回满，当前为${currentAp} / ${ap.max}`;
 
             return { isPush, text };
         }
@@ -318,7 +257,12 @@ class Skland {
                 return { isPush: false, text: `连接服务器失败：${error.message}` };
             }
         }
-        return await parseSanityResponse(response.data, server, drName, uid);
+
+        if (reImg) {
+            return await Render.realTimeData(response.data, server, drName, uid);
+        } else {
+            return await parseSanityResponse(response.data, drName, uid);
+        }
     }
 }
 
