@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link rel="shortcut icon" href="#" />
+    <link rel="stylesheet" type="text/css" href="{{pluginResources}}/template/card.css" />
+    <link rel="preload" href="{{pluginResources}}/template/fonts/HYQiHei_75S.otf" as="font" />
+</head>
+
+<body id="body">
+    <div id="hiredate">入职日&nbsp&nbsp{{data.registerTs}}</div>
+    <div id="name">{{data.name}}</div>
+    <div id="progress">
+        {{if data.mainStageProgress == ''}}
+        <img src="{{pluginResources}}/template/imgs/finished.png">
+        {{else}}
+        <div>{{data.mainStageProgress}}</div>
+        {{/if}}
+    </div>
+    <div id="furniture">{{data.furniture}}</div>
+    <div id="hired">{{data.chars}}</div>
+</body>
+
+</html>

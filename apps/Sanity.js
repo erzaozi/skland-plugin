@@ -10,7 +10,7 @@ export class Sanity extends plugin {
             priority: 1009,
             rule: [
                 {
-                    reg: "^#?(skland)?(理智|实时数据)$",
+                    reg: "^#?(skland|(明日)?方舟)?(理智|实时数据)$",
                     fnc: "querySanity"
                 }
             ]
@@ -43,13 +43,18 @@ export class Sanity extends plugin {
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList)));
-            data.push({ message: results.map(result => result.text).join('\n') });
+            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList, true)));
+            data.push({ message: results });
         }
 
         if (deleteUserId.length) {
             let newAccountList = accountList.filter(account => !deleteUserId.includes(account.userId));
             await Config.setUserConfig(e.user_id, newAccountList);
+        }
+
+        if (data.length === 1) {
+            await e.reply(data[0].message);
+            return true;
         }
 
         await e.reply(Bot.makeForwardMsg([{ message: `用户 ${e.user_id}` }, ...data]));
@@ -87,11 +92,20 @@ export class Sanity extends plugin {
                 await Config.setUserConfig(userId, newAccountList);
             }
             if (data.length) {
-                if (groupId === "undefined") {
-                    await Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
+                if (data.length === 1) {
+                    if (groupId === "undefined") {
+                        await Bot[botId]?.pickUser(userId).sendMsg(data[0].message)
+                    } else {
+                        await Bot[botId]?.pickGroup(groupId).sendMsg([segment.at(userId), data[0].message])
+                    }
+                    return true;
                 } else {
-                    await Bot[botId]?.pickGroup(groupId).sendMsg(segment.at(userId))
-                    await Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
+                    if (groupId === "undefined") {
+                        await Bot[botId]?.pickUser(userId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
+                    } else {
+                        await Bot[botId]?.pickGroup(groupId).sendMsg(segment.at(userId))
+                        await Bot[botId]?.pickGroup(groupId).sendMsg(Bot.makeForwardMsg([{ message: `用户 ${userId}` }, ...data]))
+                    }
                 }
             }
             return true;

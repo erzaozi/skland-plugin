@@ -52,6 +52,24 @@ pnpm install --filter=skland-plugin
 > [!IMPORTANT]
 > 插件开发者因为自身情况无法完善更多信息获取（开发者中没人熟悉这个游戏，获取到的数据每个值不清楚什么意义，也不知道从哪获取资源文件），如果你有代码基础并乐意完善本插件功能，可以给我们提交 [Pull requests](https://github.com/erzaozi/skland-plugin/pulls)，与官方 API 接口交互相关代码在 `components/Code.js` 中
 
+## 功能列表
+
+<details><summary>点击展开</summary>
+
+| 命令                   | 功能                       | 示例                                                                                           |
+| ---------------------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
+| #方舟绑定              | 绑定账户 Token             | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bind.png)     |
+| #方舟解绑              | 解除绑定账户               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)   |
+| ##方舟绑定帮助         | 绑定账户 Token 教程        | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png) |
+| #方舟信息              | 获取用户卡片               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)   |
+| #方舟签到              | 执行已绑定所有账户签到     | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)   |
+| #方舟开启/关闭自动签到 | 解除绑定账户               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/uautosignin.png)   |
+| #方舟理智              | 查询已绑定所有账户实时数据 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)   |
+| #方舟开启/关闭理智推送 | 理智值回满提醒             | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png)   |
+
+
+</details>
+
 ## 支持与贡献
 
 如果你喜欢这个项目，请不妨点个 Star🌟，这是对开发者最大的动力， 当然，你可以对我 [爱发电](https://afdian.net/a/sumoqi) 赞助，呜咪~❤️
