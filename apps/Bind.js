@@ -66,9 +66,9 @@ export class BindToken extends plugin {
                 item.uid.forEach(uid => {
                     msg += `\nUID：${uid}`
                 })
-                msg += `\n\n`
+                msg += `\n`
             })
-            msg += `请使用[#方舟解绑 + 账号ID]的格式进行解绑。\n注意：解绑后，该账号下的全部UID将被删除`
+            msg += `\n请使用[#方舟解绑 + 账号ID]的格式进行解绑。\n注意：解绑后，该账号下的全部UID将被删除`
             await e.reply(msg);
         } else {
             let index = accountList.findIndex(item => item.userId == userId);
