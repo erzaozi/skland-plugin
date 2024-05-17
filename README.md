@@ -46,7 +46,7 @@ pnpm install --filter=skland-plugin
 - [x] 森空岛签到
 - [x] 理智值提醒
 - [x] 查询实时数据
-- [ ] 查询基建数据
+- [x] 查询基建数据
 - [x] Token 失效提醒并自动删除
 
 > [!IMPORTANT]
@@ -62,6 +62,7 @@ pnpm install --filter=skland-plugin
 | #方舟解绑              | 解除绑定账户                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)      |
 | ##方舟绑定帮助         | 绑定账户 Token 教程          | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png)    |
 | #方舟信息              | 获取用户卡片                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)        |
+| #方舟基建              | 查询已绑定所有账户基建数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/build.png)      |
 | #方舟签到              | 执行已绑定所有账户签到       | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)      |
 | #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
 | #方舟理智              | 查询已绑定所有账户实时数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)      |

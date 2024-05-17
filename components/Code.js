@@ -274,6 +274,43 @@ class Skland {
         }
     }
 
+    async getBuilding(uid, credResp, bindingList) {
+        const headers = CONSTANTS.REQUEST_HEADERS_BASE;
+        headers.cred = credResp.cred;
+        let body = { uid: uid };
+        const timestamp = await this.getTimestamp();
+        if (!bindingList.length) {
+            return `[未知] 未知\nUID：${uid} 获取实时数据失败\n未绑定明日方舟角色`;
+        }
+        let drName, server;
+        for (let i of bindingList) {
+            if (i.uid === uid) {
+                drName = 'Dr.' + i['nickName'];
+                server = i['channelName'];
+                break;
+            }
+        }
+        if (!drName || !server) {
+            return `[${server ? server : '未知'}] [${drName ? drName : '未知'}]\nUID：${uid} 获取实时数据失败\n未找到对应UID的明日方舟角色`;
+        }
+
+        let signedHeaders = await this.getSignHeader(CONSTANTS.USER_INFO_URL, 'get', body, headers, credResp.token, timestamp);
+        let response;
+        try {
+            response = await axios({
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+            });
+        } catch (error) {
+            if (error.response) {
+                response = error.response;
+            } else {
+                return `连接服务器失败：${error.message}`;
+            }
+        }
+
+        return await Render.buildingData(response.data, server, drName, uid);
+    }
+
     async getUser(uid, credResp, bindingList) {
         const headers = CONSTANTS.REQUEST_HEADERS_BASE;
         headers.cred = credResp.cred;

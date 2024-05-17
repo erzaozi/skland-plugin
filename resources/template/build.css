@@ -1,0 +1,75 @@
+@font-face {
+  font-family: "Bender";
+  src: url("./fonts/Bender-Bold.otf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+#body {
+  width: 864px;
+  height: 1036px;
+  background-image: url("./imgs/foundation.png");
+  background-repeat: no-repeat;
+}
+
+#header {
+  position: relative;
+  height: 349px;
+}
+
+#info {
+  height: 687px;
+}
+
+.row {
+  height: 200px;
+}
+
+.row>.left {
+  position: absolute;
+  width: 345px;
+  height: 155px;
+  left: 70px;
+}
+
+.row>.right {
+  position: absolute;
+  width: 345px;
+  height: 155px;
+  left: 460px;
+}
+
+.data {
+  position: absolute;
+  display: flex;
+  flex-direction: row-reverse;
+  right: 16px;
+  bottom: 20px;
+  height: 56px;
+  width: 322px;
+  font-family: "Bender";
+}
+
+.data>.now {
+  position: relative;
+  display: inline-block;
+  color: #f4f4f4;
+  width: auto;
+  font-size: 50px;
+}
+
+.data>.max {
+  position: relative;
+  display: inline-block;
+  top: 20px;
+  color: #ababab;
+  width: auto;
+  font-size: 30px;
+}

@@ -129,6 +129,55 @@ class Render {
         }
     }
 
+    async buildingData({ data: { building: { tradings, manufactures, dormitories, meeting: { clue: { board } }, tiredChars, labor } } }, server, drName, uid) {
+        const data = {}
+
+        data.server = server
+        data.drName = drName
+        data.uid = uid
+
+        // 订单进度
+        data.tradings = {}
+        data.tradings.now = tradings.reduce((acc, cur) => acc + cur.chars.length, 0)
+        data.tradings.max = '/ ' + tradings.reduce((acc, cur) => acc + cur.stockLimit, 0)
+
+        // 制造进度
+        data.manufactures = {}
+        data.manufactures.now = manufactures.reduce((acc, cur) => acc + cur.weight, 0)
+        data.manufactures.max = '/ ' + manufactures.reduce((acc, cur) => acc + cur.capacity, 0)
+
+        // 休息进度
+        data.dormitories = {}
+        data.dormitories.now = dormitories.reduce((acc, cur) => acc + cur.chars.reduce((acc, cur) => acc + (cur.ap === 8640000 ? 1 : 0), 0), 0)
+        data.dormitories.max = '/ ' + dormitories.reduce((acc, cur) => acc + cur.chars.length, 0)
+
+        // 线索进度
+        data.board = {}
+        data.board.now = board.length
+        data.board.max = '/ 7'
+
+        // 干员疲劳
+        data.tiredChars = {}
+        data.tiredChars.now = tiredChars.length
+        data.tiredChars.max = ''
+
+        // 无人机
+        data.labor = {}
+        data.labor.now = Math.min(Math.round((Date.now() / 1000 - labor.lastUpdateTime) / 360 + labor.value), labor.maxValue)
+        data.labor.max = '/ ' + labor.maxValue
+
+        const base64 = await puppeteer.screenshot('skland-plugin', {
+            saveId: 'buildingData',
+            imgType: 'png',
+            tplFile: `${pluginResources}/template/build.html`,
+            pluginResources,
+            data: data
+        })
+
+        return base64
+
+    }
+
     async userInfoData({ data: { status: { registerTs, name, mainStageProgress }, building: { furniture }, chars } }) {
         const data = {}
 

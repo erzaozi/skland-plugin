@@ -61,6 +61,11 @@ export class Help extends plugin {
                         "desc": "获取用户卡片"
                     },
                     {
+                        "icon": 17,
+                        "title": "#方舟基建",
+                        "desc": "查询已绑定所有账户基建数据"
+                    },
+                    {
                         "icon": 1,
                         "title": "#方舟签到",
                         "desc": "执行已绑定所有账户签到"
