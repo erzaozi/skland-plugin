@@ -41,43 +41,53 @@ export class Help extends plugin {
                 "group": "功能列表",
                 "list": [
                     {
+                        "icon": 17,
+                        "title": "#方舟绑定",
+                        "desc": "绑定账户Token"
+                    },
+                    {
+                        "icon": 54,
+                        "title": "#方舟解绑",
+                        "desc": "解除绑定账户"
+                    },
+                    {
+                        "icon": 86,
+                        "title": "#方舟绑定帮助",
+                        "desc": "绑定账户Token教程"
+                    },
+                    {
+                        "icon": 14,
+                        "title": "#方舟信息",
+                        "desc": "获取用户卡片"
+                    },
+                    {
                         "icon": 1,
-                        "title": "#skland签到",
+                        "title": "#方舟签到",
                         "desc": "执行已绑定所有账户签到"
                     },
                     {
                         "icon": 5,
-                        "title": "#skland(开启|关闭)自动签到",
+                        "title": "#方舟(开启|关闭)自动签到",
                         "desc": "每天四点自动执行所有账号签到"
                     },
                     {
                         "icon": 7,
-                        "title": "#skland实时数据",
+                        "title": "#方舟理智",
                         "desc": "查询已绑定所有账户实时数据"
                     },
                     {
                         "icon": 11,
-                        "title": "#skland(开启|关闭)理智推送",
+                        "title": "#方舟(开启|关闭)理智推送",
                         "desc": "理智值回满提醒"
                     },
                     {
-                        "icon": 54,
-                        "title": "#skland绑定",
-                        "desc": "绑定账户token"
-                    },
-                    {
-                        "icon": 86,
-                        "title": "#skland绑定帮助",
-                        "desc": "绑定账户Token教程"
-                    },
-                    {
                         "icon": 3,
-                        "title": "#skland帮助",
+                        "title": "#方舟帮助",
                         "desc": "查看帮助面板"
                     },
                     {
                         "icon": 38,
-                        "title": "#skland更新",
+                        "title": "#方舟更新",
                         "desc": "更新插件"
                     }
                 ],

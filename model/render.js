@@ -19,7 +19,7 @@ class Render {
         let currentAp = Math.min(ap['current'] + elapsed, ap.max);
         data.ap = {}
         data.ap.now = currentAp
-        data.ap.max = ' / ' + ap.max
+        data.ap.max = '/ ' + ap.max
         data.ap.tip = currentAp >= ap.max ? '理智已全部恢复' : `${await formatTime(ap['completeRecoveryTime'] - currentTime)}后全部恢复`
 
         // 公开招募
@@ -27,7 +27,7 @@ class Render {
         let lastFinishTs = recruit.reduce((max, r) => r['finishTs'] > currentTime && r['finishTs'] > max ? r['finishTs'] : max, -1);
         data.recruit = {}
         data.recruit.now = recruit.length - finishedTasks
-        data.recruit.max = ' / ' + recruit.length
+        data.recruit.max = '/ ' + recruit.length
         data.recruit.tip = lastFinishTs === -1 ? '招募已全部完成' : `${await formatTime(lastFinishTs - currentTime)}后全部完成`
 
         // 公招刷新
@@ -81,33 +81,33 @@ class Render {
         const nextRewardTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
         data.reward = {}
         data.reward.now = reward['current']
-        data.reward.max = ' / ' + reward.total
+        data.reward.max = '/ ' + reward.total
         data.reward.tip = `${await formatTime(nextRewardTime - currentTime)}后刷新`
 
         // 每日任务
         const nextDailyTaskTime = Math.floor((new Date().getHours() >= 4 ? new Date(new Date().setDate(new Date().getDate() + 1)).setHours(4, 0, 0, 0) : new Date().setHours(4, 0, 0, 0)) / 1000)
         data.daily = {}
         data.daily.now = daily['current']
-        data.daily.max = ' / ' + daily.total
+        data.daily.max = '/ ' + daily.total
         data.daily.tip = `${await formatTime(nextDailyTaskTime - currentTime)}后刷新`;
 
         // 每周任务
         const nextWeeklyTaskTime = Math.floor((new Date(new Date().getTime() + ((1 - (new Date().getDay() === 0 ? 7 : new Date().getDay())) + 7) * 86400000)).setHours(4, 0, 0, 0) / 1000);
         data.weekly = {}
         data.weekly.now = weekly['current']
-        data.weekly.max = ' / ' + weekly.total
+        data.weekly.max = '/ ' + weekly.total
         data.weekly.tip = `${await formatTime(nextWeeklyTaskTime - currentTime)}后刷新`;
 
         // 数据增补仪
         data.higherItem = {}
         data.higherItem.now = higherItem['current']
-        data.higherItem.max = ' / ' + higherItem.total
+        data.higherItem.max = '/ ' + higherItem.total
         data.higherItem.tip = `${await formatTime(termTs - currentTime)}后刷新`;
 
         // 数据增补条
         data.lowerItem = {}
         data.lowerItem.now = lowerItem['current']
-        data.lowerItem.max = ' / ' + lowerItem.total
+        data.lowerItem.max = '/ ' + lowerItem.total
         data.lowerItem.tip = `${await formatTime(termTs - currentTime)}后刷新`;
 
         const base64 = await puppeteer.screenshot('skland-plugin', {

@@ -10,7 +10,7 @@ export class Sanity extends plugin {
             priority: 1009,
             rule: [
                 {
-                    reg: "^#?(skland)?(理智|实时数据)$",
+                    reg: "^#?(skland|(明日)?方舟)?(理智|实时数据)$",
                     fnc: "querySanity"
                 }
             ]
