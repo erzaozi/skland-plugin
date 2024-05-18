@@ -6,7 +6,7 @@
 
 - 一个适用于 [Yunzai 系列机器人框架](https://github.com/yhArcadia/Yunzai-Bot-plugins-index) 的明日方舟辅助插件
 
-- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满自动推送
+- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满自动推送，支持Maa远程控制
 
 - **使用中遇到问题请加 QQ 群咨询：[707331865](https://qm.qq.com/q/TXTIS9KhO2)**
 
@@ -41,12 +41,13 @@ pnpm install --filter=skland-plugin
 
 ## 功能列表
 
-请使用 `#skland帮助` 获取完整帮助
+请使用 `#方舟帮助` 获取完整帮助
 
 - [x] 森空岛签到
 - [x] 理智值提醒
 - [x] 查询实时数据
 - [x] 查询基建数据
+- [x] Maa远程控制适配
 - [x] Token 失效提醒并自动删除
 
 > [!IMPORTANT]
@@ -67,7 +68,8 @@ pnpm install --filter=skland-plugin
 | #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
 | #方舟理智              | 查询已绑定所有账户实时数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)      |
 | #方舟开启/关闭理智推送 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png)  |
-
+| #maa十连抽 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/card.png)  |
+| #maa立即截图 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/maa.png)  |
 
 
 </details>
@@ -81,6 +83,7 @@ pnpm install --filter=skland-plugin
 ## 相关项目
 
 - [nonebot-plugin-skland-arksign](https://github.com/GuGuMur/nonebot-plugin-skland-arksign)：用于每日早八定时签到森空岛明日方舟的 Nonebot 插件
+- [amiyabot-arknights-hsyhhssyy-maa](https://github.com/hsyhhssyy/amiyabot-arknights-hsyhhssyy-maa)
 
 ## 许可证
 

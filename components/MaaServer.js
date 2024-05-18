@@ -85,7 +85,6 @@ class MaaServer {
     }
 
     async parsePayload(body) {
-        console.log(body)
         let message
         switch (body.type) {
             case 'CaptureImageNow':

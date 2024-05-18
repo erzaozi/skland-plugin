@@ -2,6 +2,7 @@ import plugin from '../../../lib/plugins/plugin.js'
 import Config from "../components/Config.js";
 import MaaServer from "../components/MaaServer.js";
 import crypto from 'crypto';
+import { pluginResources } from '../model/path.js';
 
 export class Maa extends plugin {
     constructor() {
@@ -20,6 +21,7 @@ export class Maa extends plugin {
 
     async maa(e) {
         const maa_config = await Config.getConfig().maa_user_list
+        const public_link = await Config.getConfig().maa_public_link
 
         const isConfigured = maa_config.some(entry => {
             const [userId] = entry.split(':');
@@ -27,8 +29,20 @@ export class Maa extends plugin {
         });
 
         if (!isConfigured) {
-            e.reply('您未配置Maa账号，请使用[#方舟设置maa + 设备标识符]命令绑定Maa');
-            return true;
+            if (public_link == '') {
+                e.reply('主人未配置Maa公网连接地址，请联系机器人管理员');
+                return true;
+            }
+            await e.reply('您当前未配置Maa设备，请先按照以下教程配置Maa设备')
+            const maaStep = [
+                { message: '打开Maa，找到设置-远程控制，填入以下信息' },
+                { message: `获取任务端点：${public_link}/maa/getTask` },
+                { message: `汇报任务端点：${public_link}/maa/reportStatus` },
+                { message: segment.image(pluginResources + '/help/maa.png') },
+                { message: '使用[#方舟设置maa + 设备标识符]命令绑定Maa设备' },
+            ]
+            await e.reply(Bot.makeForwardMsg(maaStep))
+            return true
         }
 
         const data = maa_config.find(entry => {
@@ -79,7 +93,7 @@ export class Maa extends plugin {
                 type = 'LinkStart-Recruiting'
                 snapshot = true
                 break;
-            case '获取信用及购物':
+            case '信用购物':
                 type = 'LinkStart-Mall'
                 snapshot = true
                 break;
@@ -104,7 +118,7 @@ export class Maa extends plugin {
                 snapshot = true
                 break;
             default:
-                e.reply(`请输入正确的任务名称\n您现在的用户标识符为 [${e.user_id}]`)
+                e.reply(`请输入正确的任务名称\n使用[#方舟帮助]查看支持远程控制的功能`)
                 return true;
         }
 
@@ -136,13 +150,13 @@ export class Maa extends plugin {
 
         setTimeout(async () => {
             if (MaaServer.taskList[data] && MaaServer.taskList[data].length > 0) {
-                await e.reply('Maa未能及时取走任务，请检查Maa是否正常运行');
+                await e.reply(`Maa未能及时取走任务，请检查Maa是否正常运行，检查用户标识符与设备标识符是否一致\n您的用户标识符：${e.user_id}\n您的设备标识符：${data.split(':')[1]}\n使用[#方舟设置maa + 设备标识符]命令重新绑定Maa设备`);
                 delete MaaServer.taskList[data];
                 delete MaaServer.reportList[data];
                 return true;
             } else {
                 if (snapshot) {
-                    await e.reply('Maa已经收到啦！完成后会截图通知您哦~');
+                    await e.reply(`Maa已经收到啦！${taskName}完成后会截图通知您哦~`);
                 }
                 return true;
             }
