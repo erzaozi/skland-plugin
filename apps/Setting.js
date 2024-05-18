@@ -15,9 +15,23 @@ export class Setting extends plugin {
                 {
                     reg: "^#?(skland|(明日)?方舟)(开启|关闭)(理智)?推送$",
                     fnc: "setAutoPush"
+                },
+                {
+                    reg: "^#?(skland|(明日)?方舟)设置(MAA|Maa|maa).*$",
+                    fnc: "setMAA"
                 }
             ]
         })
+    }
+
+    async setMAA(e) {
+        let config = await Config.getConfig();
+        let device = e.msg.replace(/^#?(skland|(明日)?方舟)设置(MAA|Maa|maa)/, '').trim();
+        let user = e.user_id;
+        config.maa_user_list = config.maa_user_list.filter(item => item.split(':')[0] !== user.toString());
+        config.maa_user_list = config.maa_user_list.concat(`${user}:${device}`);
+        Config.setConfig(config);
+        return e.reply(`已绑定MAA设备：${device}`);
     }
 
     async setAutoSign(e) {
