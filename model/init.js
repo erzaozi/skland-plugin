@@ -7,7 +7,9 @@ class Init {
     constructor() {
         this.initConfig()
         this.syncConfig().then(syncCount => {
-            logger.info(`[Skland-Plugin] 同步了 ${syncCount} 个用户信息`)
+            logger.mark(
+                logger.blue('[Skland PLUGIN]') + ' 同步了 ' + logger.green(syncCount) + ' 个用户信息'
+            )
         });
     }
 
