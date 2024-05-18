@@ -96,7 +96,10 @@ class MaaServer {
                 break;
             case 'HeartBeat':
                 const task = this.reportList[`${body.user}:${body.device}`].find(item => item.task == body.task);
-                message = task ? '当前执行的任务是：' + task.type : '当前没有在执行的任务';
+                message = task ? '当前正在进行的任务是：' + task.type : '当前没有正在进行的任务';
+                break;
+            case 'StopTask':
+                message = '当前正在进行的任务已停止'
                 break;
             default:
                 message = body.payload
@@ -106,7 +109,7 @@ class MaaServer {
         if (message == '') return
 
         if (body.group_id) {
-            Bot[body.self_id].pickGroup(body.group_id).sendMsg([segment.at(body.user), 'MAA返回了以下内容\n', message])
+            Bot[body.self_id].pickGroup(body.group_id).sendMsg([segment.at(body.user), ' MAA返回了以下内容\n', message])
         } else {
             Bot[body.self_id].pickUser(body.user).sendMsg(['MAA返回了以下内容\n', message])
         }

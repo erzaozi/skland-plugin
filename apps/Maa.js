@@ -56,6 +56,9 @@ export class Maa extends plugin {
             case '当前任务':
                 type = 'HeartBeat'
                 break;
+            case '强制停止':
+                type = 'StopTask'
+                break;
             case '一键长草':
                 type = 'LinkStart'
                 snapshot = true
@@ -93,7 +96,7 @@ export class Maa extends plugin {
                 snapshot = true
                 break;
             default:
-                e.reply('请输入正确的任务名称');
+                e.reply(`请输入正确的任务名称\n您现在的用户标识符为 [${e.user_id}]`)
                 return true;
         }
 
