@@ -86,6 +86,11 @@ export class Help extends plugin {
                         "desc": "理智值回满提醒"
                     },
                     {
+                        "icon": 21,
+                        "title": "#方舟设置maa",
+                        "desc": "绑定Maa设备"
+                    },
+                    {
                         "icon": 3,
                         "title": "#方舟帮助",
                         "desc": "查看帮助面板"
@@ -95,6 +100,86 @@ export class Help extends plugin {
                         "title": "#方舟更新",
                         "desc": "更新插件"
                     }
+                ],
+            },
+            {
+                "group": "Maa功能",
+                "list": [
+                    {
+                        "icon": 24,
+                        "title": "#maa截图",
+                        "desc": "等待当前任务结束后截图"
+                    },
+                    {
+                        "icon": 27,
+                        "title": "#maa立即截图",
+                        "desc": "立刻马上截图"
+                    },
+                    {
+                        "icon": 30,
+                        "title": "#maa当前任务",
+                        "desc": "查看当前在执行什么任务"
+                    },
+                    {
+                        "icon": 29,
+                        "title": "#maa强制停止",
+                        "desc": "停止当前进行的任务"
+                    },
+                    {
+                        "icon": 28,
+                        "title": "#maa一键长草",
+                        "desc": "相当于点击LinkStart"
+                    },
+                    {
+                        "icon": 26,
+                        "title": "#maa基建换班",
+                        "desc": "基建换班"
+                    },
+                    {
+                        "icon": 25,
+                        "title": "#maa开始唤醒",
+                        "desc": "开始唤醒"
+                    },
+                    {
+                        "icon": 23,
+                        "title": "#maa刷理智",
+                        "desc": "刷理智"
+                    },
+                    {
+                        "icon": 11,
+                        "title": "#maa自动公招",
+                        "desc": "自动公招"
+                    },
+                    {
+                        "icon": 31,
+                        "title": "#maa信用购物",
+                        "desc": "获取信用及购物"
+                    },
+                    {
+                        "icon": 32,
+                        "title": "#maa领取奖励",
+                        "desc": "领取奖励"
+                    },
+                    {
+                        "icon": 34,
+                        "title": "#maa自动肉鸽",
+                        "desc": "自动肉鸽"
+                    },
+                    {
+                        "icon": 36,
+                        "title": "#maa生息演算",
+                        "desc": "生息演算"
+                    },
+                    {
+                        "icon": 38,
+                        "title": "#maa单抽",
+                        "desc": "一次单抽（真实抽卡）"
+                    },
+                    {
+                        "icon": 40,
+                        "title": "#maa十连抽",
+                        "desc": "一次十连抽（真实抽卡）"
+                    },
                 ],
             }
         ]

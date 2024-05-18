@@ -111,6 +111,64 @@ export function supportGuoba() {
         },
         {
           component: "Divider",
+          label: "Maa 相关配置",
+          componentProps: {
+            orientation: "left",
+            plain: true,
+          },
+        },
+        {
+          field: "maa_server_port",
+          label: "Maa开放端口",
+          bottomHelpMessage: "Maa的HTTP服务器开放端口",
+          component: "InputNumber",
+          componentProps: {
+            placeholder: '请输入端口',
+            min: 1,
+            max: 65535,
+            step: 1,
+          },
+        },
+        {
+          field: "maa_public_link",
+          label: "Maa服务公开地址",
+          bottomHelpMessage: "给群友绑定Maa功能用的，不需要加端点",
+          component: "Input",
+          componentProps: {
+            placeholder: '请输入服务地址',
+          },
+        },
+        {
+          field: "maa_user_lists",
+          label: "Maa用户配置",
+          bottomHelpMessage: "Maa用户列表",
+          component: "GSubForm",
+          componentProps: {
+            multiple: true,
+            schemas: [
+              {
+                field: "user",
+                label: "用户标识符",
+                component: "Input",
+                required: true,
+                componentProps: {
+                  placeholder: '请输入用户唯一标识符',
+                },
+              },
+              {
+                field: "device",
+                label: "设备标识符",
+                component: "Input",
+                required: false,
+                componentProps: {
+                  placeholder: '请输入设备唯一标识符',
+                },
+              },
+            ],
+          },
+        },
+        {
+          component: "Divider",
           label: "Skland 签名配置",
           componentProps: {
             orientation: "left",
@@ -145,6 +203,10 @@ export function supportGuoba() {
         config["skland_auto_push_list"].forEach(user => {
           config["skland_auto_push_lists"].push({ push_bot: user.split(":")[0], push_group: user.split(":")[1], push_user: user.split(":")[2] });
         })
+        config["maa_user_lists"] = [];
+        config["maa_user_list"].forEach(user => {
+          config["maa_user_lists"].push({ user: user.split(":")[0], device: user.split(":")[1] });
+        });
         return config
       },
 
@@ -166,6 +228,12 @@ export function supportGuoba() {
           config["skland_auto_push_list"].push(`${push_bot}:${push_group || "undefined"}:${push_user}`);
         });
         delete config["skland_auto_push_lists"];
+
+        config["maa_user_list"] = [];
+        config["maa_user_lists"].forEach(({ user, device }) => {
+          config["maa_user_list"].push(`${user}:${device || "undefined"}`);
+        });
+        delete config["maa_user_lists"];
 
         Config.setConfig(config)
         return Result.ok({}, '保存成功~')
