@@ -95,6 +95,14 @@ export class Maa extends plugin {
                 type = 'LinkStart-ReclamationAlgorithm'
                 snapshot = true
                 break;
+            case '单抽':
+                type = 'Toolbox-GachaOnce'
+                snapshot = true
+                break;
+            case '十连抽':
+                type = 'Toolbox-GachaTenTimes'
+                snapshot = true
+                break;
             default:
                 e.reply(`请输入正确的任务名称\n您现在的用户标识符为 [${e.user_id}]`)
                 return true;

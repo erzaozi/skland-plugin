@@ -109,9 +109,9 @@ class MaaServer {
         if (message == '') return
 
         if (body.group_id) {
-            Bot[body.self_id].pickGroup(body.group_id).sendMsg([segment.at(body.user), ' MAA返回了以下内容\n', message])
+            Bot[body.self_id].pickGroup(body.group_id).sendMsg([segment.at(body.user), ' Maa返回了以下内容\n', message])
         } else {
-            Bot[body.self_id].pickUser(body.user).sendMsg(['MAA返回了以下内容\n', message])
+            Bot[body.self_id].pickUser(body.user).sendMsg(['Maa返回了以下内容\n', message])
         }
         this.reportList[`${body.user}:${body.device}`].splice(this.reportList[`${body.user}:${body.device}`].indexOf(body), 1)
     }
