@@ -39,6 +39,20 @@ pnpm install --filter=skland-plugin
 > [!WARNING]
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
+## Maa 配置
+插件启动后会在机器人服务器上启动一个 `HTTP` 服务器，用于与 Maa 通信，请查看控制台并找到如下内容
+```
+[TRSSYz][17:58:29.391][INFO] - 正在载入 SKLAND-PLUGIN
+[TRSSYz][17:58:29.447][MARK] [Skland PLUGIN] 同步了 1 个用户信息
+[TRSSYz][17:58:29.463][MARK] [MAA HTTP Server] 获取任务端点：http://localhost:25087/maa/getTask
+[TRSSYz][17:58:29.464][MARK] [MAA HTTP Server] 汇报任务端点：http://localhost:25087/maa/reportStatus
+[TRSSYz][17:58:29.577][INFO] - SKLAND-PLUGIN 载入成功
+```
+如果你没有修改默认端口，程序会监听 `25087` 端口。如果机器人和 Maa 在同一网络下，打开Maa-`设置`-`远程控制`，填入控制台给的对应地址，用户标识符请填写您的 QQ 账号即可，启动机器人后输入 `#方舟设置maa + 设备标识符` 即可完成绑定
+
+> [!NOTE]
+> 如果你的机器人和 Maa 不在同一网络下或者想给群友一起用，请将 `localhost` 改成机器人服务器对应的公网IP，并打开防火墙。建议打开 Guoba 将公网地址填入 `Maa服务公开地址` 配置项，方便群友自行配置。浏览器直接访问端点可看到 `[SKLAND-PLUGIN]MAA远程控制协议已启动0小时0分钟0秒` 字样，可自行测试连通性
+
 ## 功能列表
 
 请使用 `#方舟帮助` 获取完整帮助
