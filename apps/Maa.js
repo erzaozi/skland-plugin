@@ -39,6 +39,7 @@ export class Maa extends plugin {
                 { message: `获取任务端点：${public_link}/maa/getTask` },
                 { message: `汇报任务端点：${public_link}/maa/reportStatus` },
                 { message: segment.image(pluginResources + '/help/maa.png') },
+                { message: `您当前的用户识别符为 [${e.user_id}]` },
                 { message: '使用[#方舟设置maa + 设备标识符]命令绑定Maa设备' },
             ]
             await e.reply(Bot.makeForwardMsg(maaStep))
@@ -59,6 +60,7 @@ export class Maa extends plugin {
 
         let type = ''
         let snapshot = false
+        let value = ''
 
         switch (taskName) {
             case '截图':
@@ -118,20 +120,40 @@ export class Maa extends plugin {
                 snapshot = true
                 break;
             default:
-                e.reply(`请输入正确的任务名称\n使用[#方舟帮助]查看支持远程控制的功能`)
-                return true;
+                if (taskName.startsWith('切换连接地址')) {
+                    const link = taskName.replace('切换连接地址', '').trim()
+                    if (link == '') {
+                        e.reply('请输入正确的连接地址')
+                        return true;
+                    }
+                    type = 'Settings-ConnectAddress'
+                    value = link
+                } else if (taskName.startsWith('关卡选择')) {
+                    const stage = taskName.replace('关卡选择', '').trim()
+                    if (stage == '') {
+                        e.reply('请输入正确的关卡名称')
+                        return true;
+                    }
+                    type = 'Settings-Stage1'
+                    value = stage
+                } else {
+                    e.reply(`请输入正确的任务名称\n使用[#方舟帮助]查看支持远程控制的功能`)
+                    return true;
+                }
         }
 
         MaaServer.taskList[data].push({
             "id": uuid,
             "type": type,
+            "params": value
         })
 
         MaaServer.reportList[data].push({
             "task": uuid,
             "group_id": e.group_id || null,
             "self_id": e.self_id,
-            "type": type
+            "type": type,
+            "value": value
         })
 
         if (snapshot) {

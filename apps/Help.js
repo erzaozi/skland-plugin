@@ -180,6 +180,16 @@ export class Help extends plugin {
                         "title": "#maa十连抽",
                         "desc": "一次十连抽（真实抽卡）"
                     },
+                    {
+                        "icon": 41,
+                        "title": "#maa切换连接地址",
+                        "desc": "切换连接地址"
+                    },
+                    {
+                        "icon": 42,
+                        "title": "#maa关卡选择",
+                        "desc": "关卡选择"
+                    },
                 ],
             }
         ]

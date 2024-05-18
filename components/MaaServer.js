@@ -58,6 +58,7 @@ class MaaServer {
                                 body.group_id = item.group_id;
                                 body.self_id = item.self_id;
                                 body.type = item.type;
+                                body.value = item.value;
                                 await this.parsePayload(body)
                             }
                         });
@@ -99,6 +100,12 @@ class MaaServer {
                 break;
             case 'StopTask':
                 message = '当前正在进行的任务已停止'
+                break;
+            case 'Settings-Stage1':
+                message = `切换关卡至 [${body.value}] 成功，请自行判断关卡是否合规`
+                break;
+            case 'Settings-ConnectAddress':
+                message = `切换连接地址至 [${body.value}] 成功，请自行判断连接地址是否有效`
                 break;
             default:
                 message = body.payload
