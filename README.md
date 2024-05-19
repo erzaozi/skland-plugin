@@ -6,7 +6,7 @@
 
 - 一个适用于 [Yunzai 系列机器人框架](https://github.com/yhArcadia/Yunzai-Bot-plugins-index) 的明日方舟辅助插件
 
-- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满自动推送，支持Maa远程控制
+- 无需提供账号密码，支持理智值查询和森空岛签到，理智值回满自动推送，支持 Maa 远程控制
 
 - **使用中遇到问题请加 QQ 群咨询：[707331865](https://qm.qq.com/q/TXTIS9KhO2)**
 
@@ -40,7 +40,9 @@ pnpm install --filter=skland-plugin
 > 非常不建议手动修改配置文件，本插件已兼容 [Guoba-plugin](https://github.com/guoba-yunzai/guoba-plugin) ，请使用锅巴插件对配置项进行修改
 
 ## Maa 配置
+
 插件启动后会在机器人服务器上启动一个 `HTTP` 服务器，用于与 Maa 通信，请查看控制台并找到如下内容
+
 ```
 [TRSSYz][17:58:29.391][INFO] - 正在载入 SKLAND-PLUGIN
 [TRSSYz][17:58:29.447][MARK] [Skland PLUGIN] 同步了 1 个用户信息
@@ -48,10 +50,11 @@ pnpm install --filter=skland-plugin
 [TRSSYz][17:58:29.464][MARK] [MAA HTTP Server] 汇报任务端点：http://localhost:25087/maa/reportStatus
 [TRSSYz][17:58:29.577][INFO] - SKLAND-PLUGIN 载入成功
 ```
-如果你没有修改默认端口，程序会监听 `25087` 端口。如果机器人和 Maa 在同一网络下，打开Maa-`设置`-`远程控制`，填入控制台给的对应地址，用户标识符请填写您的 QQ 账号即可，启动机器人后输入 `#方舟设置maa + 设备标识符` 即可完成绑定
+
+如果你没有修改默认端口，程序会监听 `25087` 端口。如果机器人和 Maa 在同一网络下，打开 Maa-`设置`-`远程控制`，填入控制台给的对应地址，用户标识符请填写您的 QQ 账号即可，启动机器人后输入 `#方舟设置maa + 设备标识符` 即可完成绑定
 
 > [!NOTE]
-> 如果你的机器人和 Maa 不在同一网络下或者想给群友一起用，请将 `localhost` 改成机器人服务器对应的公网IP，并打开防火墙。建议打开 Guoba 将公网地址填入 `Maa服务公开地址` 配置项，方便群友自行配置。浏览器直接访问端点可看到 `[SKLAND-PLUGIN]MAA远程控制协议已启动0小时0分钟0秒` 字样，可自行测试连通性
+> 如果你的机器人和 Maa 不在同一网络下或者想给群友一起用，请将 `localhost` 改成机器人服务器对应的公网 IP，并打开防火墙。建议打开 Guoba 将公网地址填入 `Maa服务公开地址` 配置项，方便群友自行配置。浏览器直接访问端点可看到 `[SKLAND-PLUGIN]MAA远程控制协议已启动0小时0分钟0秒` 字样，可自行测试连通性
 
 ## 功能列表
 
@@ -61,7 +64,7 @@ pnpm install --filter=skland-plugin
 - [x] 理智值提醒
 - [x] 查询实时数据
 - [x] 查询基建数据
-- [x] Maa远程控制适配
+- [x] Maa 远程控制适配
 - [x] Token 失效提醒并自动删除
 
 > [!IMPORTANT]
@@ -71,20 +74,19 @@ pnpm install --filter=skland-plugin
 
 <details><summary>点击展开</summary>
 
-| 命令                   | 功能                         | 示例                                                                                              |
-| ---------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------- |
-| #方舟绑定              | 绑定账户 Token               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bind.png)        |
-| #方舟解绑              | 解除绑定账户                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)      |
-| #方舟绑定帮助         | 绑定账户 Token 教程          | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png)    |
-| #方舟信息              | 获取用户卡片                 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)        |
-| #方舟基建              | 查询已绑定所有账户基建数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/build.png)      |
-| #方舟签到              | 执行已绑定所有账户签到       | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)      |
-| #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到 | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
-| #方舟理智              | 查询已绑定所有账户实时数据   | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)      |
-| #方舟开启/关闭理智推送 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png)  |
-| #maa十连抽 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/card.png)  |
-| #maa立即截图 | 理智值回满提醒               | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/maa.png)  |
-
+| 命令                   | 功能                          | 示例                                                                                             |
+| ---------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| #方舟绑定              | 绑定账户 Token                | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bind.png)       |
+| #方舟解绑              | 解除绑定账户                  | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/unbind.png)     |
+| #方舟绑定帮助          | 绑定账户 Token 教程           | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png)   |
+| #方舟信息              | 获取用户卡片                  | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)       |
+| #方舟基建              | 查询已绑定所有账户基建数据    | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/build.png)      |
+| #方舟签到              | 执行已绑定所有账户签到        | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)     |
+| #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到  | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
+| #方舟理智              | 查询已绑定所有账户实时数据    | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)     |
+| #方舟开启/关闭理智推送 | 理智值回满提醒                | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosanity.png) |
+| #maa 十连抽            | 远程控制 maa 抽卡（真实抽卡） | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/card.png)       |
+| #maa 立即截图          | 返回游戏当前截图              | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/maa.png)        |
 
 </details>
 

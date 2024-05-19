@@ -38,8 +38,8 @@ export class Maa extends plugin {
                 { message: '打开Maa，找到设置-远程控制，填入以下信息' },
                 { message: `获取任务端点：${public_link}/maa/getTask` },
                 { message: `汇报任务端点：${public_link}/maa/reportStatus` },
+                { message: `您当前的用户识别符为：${e.user_id}` },
                 { message: segment.image(pluginResources + '/help/maa.png') },
-                { message: `您当前的用户识别符为 [${e.user_id}]` },
                 { message: '使用[#方舟设置maa + 设备标识符]命令绑定Maa设备' },
             ]
             await e.reply(Bot.makeForwardMsg(maaStep))
