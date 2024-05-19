@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link rel="shortcut icon" href="#" />
+    <link rel="stylesheet" type="text/css" href="{{pluginResources}}/template/arkgacha.css" />
+    <link rel="preload" href="{{pluginResources}}/template/fonts/HYQiHei_75S.otf" as="font" />
+</head>
+
+<body id="body">
+    <div id="header">
+    </div>
+    <div id="info">
+        <div class="data_box">
+            {{each datas data idx}}
+            <div class="row">
+                <div class="time">{{data.ts}}</div>
+                <div class="pool">{{data.pool}}</div>
+                {{if data.rarity === 3}}
+                <div class="role" style="color: rgb(162, 49, 255);">{{data.name}}{{if data.isNew}}<span class="new-badge">N</span>{{/if}}</div>
+                {{else if data.rarity === 4}}
+                <div class="role" style="color: rgb(204, 122, 0);">{{data.name}}{{if data.isNew}}<span class="new-badge">N</span>{{/if}}</div>
+                {{else if data.rarity === 5}}
+                <div class="role" style="color: rgb(238, 87, 0);">{{data.name}}{{if data.isNew}}<span class="new-badge">N</span>{{/if}}</div>
+                {{else}}
+                <div class="role">{{data.name}}{{if data.isNew}}<span class="new-badge">N</span>{{/if}}</div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <div id="footer">
+        <img src="{{pluginResources}}/template/imgs/zf.png" id="logo">
+    </div>
+</body>
+
+</html>

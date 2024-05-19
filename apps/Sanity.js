@@ -27,7 +27,7 @@ export class Sanity extends plugin {
         let accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
         if (!accountList.length) {
-            return await e.reply("你还没有绑定任何账号呢，请先绑定账号");
+            return await e.reply("你还没有绑定任何账号呢，请使用[#方舟绑定 + Token]的格式进行绑定");
         }
 
         const skland = new Skland();

@@ -1,0 +1,82 @@
+@font-face {
+    font-family: "HYQiHei";
+    src: url("./fonts/HYQiHei_75S.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    font-size: 20px;
+    color: white;
+}
+
+#body {
+    width: 864px;
+    height: auto;
+    background-image: url("./imgs/arkgacha.png");
+    background-color: #161616;
+    background-repeat: no-repeat;
+}
+
+#header {
+    position: relative;
+    height: 349px;
+}
+
+.row {
+    display: grid;
+    position: relative;
+    height: 60px;
+    width: 624px;
+    left: 120px;
+    text-align: center;
+    border-bottom: 1px solid #5d5d5d;
+}
+
+.time {
+    position: absolute;
+    margin-top: 20px;
+    display: inline-block;
+    width: 150px;
+    left: 0px;
+    font-weight: bold;
+}
+
+.pool {
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.role {
+    position: absolute;
+    margin-top: 20px;
+    display: inline-block;
+    right: 0px;
+    width: 150px;
+}
+
+.new-badge {
+    display: inline-block;
+    background-color: #f5352e;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 12px;
+    margin-left: 4px;
+    vertical-align: top;
+}
+
+#footer {
+    position: relative;
+    height: 200px;
+}
+
+#footer>#logo {
+    position: absolute;
+    right: 68px;
+    top: 50px;
+}

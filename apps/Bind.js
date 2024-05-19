@@ -24,13 +24,13 @@ export class BindToken extends plugin {
     async bindToken(e) {
         const token = e.msg.replace(/#?(skland|(明日)?方舟)绑定/g, "").trim();
 
-        if (!token) return await e.reply("请输入正确的Token\n使用【#方舟绑定帮助】查看获取Token方法！");
+        if (!token) return await e.reply("请输入正确的Token\n使用[#方舟绑定帮助]查看获取Token方法！");
 
         const skland = new Skland();
         const { status, message, bindingList, credResp } = await skland.isAvailable(token);
 
         if (!status) {
-            await e.reply(`绑定失败！原因：${message}\n使用【#方舟绑定帮助】查看获取Token方法`);
+            await e.reply(`绑定失败！原因：${message}\n使用[#方舟绑定帮助]查看获取Token方法`);
             return true;
         }
 

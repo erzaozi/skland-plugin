@@ -2,22 +2,22 @@ import plugin from '../../../lib/plugins/plugin.js'
 import Skland from "../components/Code.js";
 import Config from "../components/Config.js";
 
-export class Building extends plugin {
+export class Gacha extends plugin {
     constructor() {
         super({
-            name: "Skland-基建数据",
+            name: "Skland-寻访查询",
             event: "message",
             priority: 1009,
             rule: [
                 {
-                    reg: "^#?(skland|(明日)?方舟)?(基建|基建数据)$",
-                    fnc: "queryBuilding"
+                    reg: "^#?b?服?(寻访|(skland|(明日)?方舟)抽卡)记录$",
+                    fnc: "gacha"
                 }
             ]
         })
     }
 
-    async queryBuilding(e) {
+    async gacha(e) {
         let accountList = JSON.parse(await redis.get(`Yunzai:skland:users:${e.user_id}`)) || await Config.getUserConfig(e.user_id);
 
         if (!accountList.length) {
@@ -29,7 +29,7 @@ export class Building extends plugin {
         let deleteUserId = [];
 
         for (let account of accountList) {
-            const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+            const { status } = await skland.isAvailable(account.token);
 
             if (!status) {
                 data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：\n${account.uid.join('\n')}\n请重新绑定Token` });
@@ -37,7 +37,9 @@ export class Building extends plugin {
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getBuilding(uid, credResp, bindingList, true)));
+            const type = e.msg.includes('B服') || e.msg.includes('b服') ? 2 : 1;
+
+            let results = await skland.getGacha(account.token, type, true);
             data.push({ message: results });
         }
 

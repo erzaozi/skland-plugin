@@ -12,6 +12,7 @@ const CONSTANTS = {
     CRED_CODE_URL: "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code",
     USER_INFO_URL: "https://zonai.skland.com/api/v1/game/player/info",
     CRED_CHECK_URL: "https://zonai.skland.com/api/v1/user/check",
+    GACHA_URL: "https://ak.hypergryph.com/user/api/inquiry/gacha",
     REQUEST_HEADERS_BASE: {
         "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 33; ) Okhttp/4.11.0",
         "Accept-Encoding": "gzip",
@@ -346,6 +347,32 @@ class Skland {
         }
 
         return await Render.userInfoData(response.data);
+    }
+
+    async getGacha(token, type = 1, reImg = false) {
+        const list = []
+        let response;
+        try {
+            response = await axios({
+                method: 'get', url: CONSTANTS.GACHA_URL, params: { page: 1, token: token, channelId: type == 1 ? '' : '2' },
+            });
+            const data = response.data;
+            if (data.code !== 0) {
+                return `获取数据失败：${data.msg}${type == 1 ? '如果你是B服，请使用[#b服寻访记录]命令查看' : ''}`
+            }
+            for (let i of data.data.list) {
+                for (let j of i.chars) {
+                    list.push({ ts: i.ts, pool: i.pool, name: j.name, rarity: j.rarity, isNew: j.isNew })
+                }
+            }
+            if (reImg) {
+                return await Render.gachaData(list);
+            } else {
+                return list;
+            }
+        } catch (error) {
+            return `连接服务器失败：${error.message}`
+        }
     }
 }
 

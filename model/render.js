@@ -207,6 +207,21 @@ class Render {
 
         return base64
     }
+
+    async gachaData(list) {
+        list.forEach(item => {
+            item.ts = new Date(item.ts * 1000).toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-').replace(/(\d{4}-)/, '');
+        })
+        const base64 = await puppeteer.screenshot('skland-plugin', {
+            saveId: 'gachaData',
+            imgType: 'png',
+            tplFile: `${pluginResources}/template/arkgacha.html`,
+            pluginResources,
+            datas: list
+        })
+
+        return base64
+    }
 }
 
 export default new Render()

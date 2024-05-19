@@ -64,6 +64,7 @@ pnpm install --filter=skland-plugin
 - [x] 理智值提醒
 - [x] 查询实时数据
 - [x] 查询基建数据
+- [x] 查询寻访记录
 - [x] Maa 远程控制适配
 - [x] Token 失效提醒并自动删除
 
