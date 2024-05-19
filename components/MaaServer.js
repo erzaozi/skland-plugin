@@ -1,9 +1,11 @@
 import http from 'http';
+import fs from 'fs';
 import Config from './Config.js';
+import { pluginResources } from '../model/path.js';
 
 class MaaServer {
     constructor() {
-        this.startTime = process.uptime();
+        this.startTime = Date.now();
         this.initServer();
         this.taskList = {};
         this.reportList = {};
@@ -75,14 +77,22 @@ class MaaServer {
     }
 
     async sendStatus(response) {
-        const currentTime = process.uptime();
-        const duration = currentTime - this.startTime;
+        const currentTime = Date.now();
+        const duration = (currentTime - this.startTime) / 1000;
         const hours = Math.floor(duration / 3600);
         const minutes = Math.floor((duration % 3600) / 60);
         const seconds = Math.floor(duration % 60);
 
-        response.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-        response.end(`[SKLAND-PLUGIN]\nMAA远程控制协议已启动${hours}小时${minutes}分钟${seconds}秒`);
+        response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        let filePath = pluginResources + '/maa/index.html';
+        fs.readFile(filePath, (err, content) => {
+            if (err) {
+                response.end(`[SKLAND-PLUGIN]\nMAA远程服务已运行${hours}小时${minutes}分钟${seconds}秒`);
+            } else {
+                content = content.toString().replace('{startTime}', this.startTime)
+                response.end(content)
+            }
+        });
     }
 
     async parsePayload(body) {
