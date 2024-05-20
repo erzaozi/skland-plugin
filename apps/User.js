@@ -37,7 +37,11 @@ export class UserInfo extends plugin {
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getUser(uid, credResp, bindingList)));
+            let results = [];
+            for (const uid of account.uid) {
+                const result = await skland.getUser(uid, credResp, bindingList);
+                results.push(result);
+            }
             data.push({ message: results });
         }
 

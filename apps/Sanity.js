@@ -43,7 +43,11 @@ export class Sanity extends plugin {
                 continue;
             }
 
-            let results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList, true)));
+            let results = [];
+            for (const uid of account.uid) {
+                const result = await skland.getSanity(uid, credResp, bindingList, true);
+                results.push(result);
+            }
             data.push({ message: results });
         }
 
