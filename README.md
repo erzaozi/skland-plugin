@@ -82,6 +82,7 @@ pnpm install --filter=skland-plugin
 | #方舟绑定帮助          | 绑定账户 Token 教程           | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/bindhelp.png)   |
 | #方舟信息              | 获取用户卡片                  | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/info.png)       |
 | #方舟基建              | 查询已绑定所有账户基建数据    | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/build.png)      |
+| #寻访记录              | 查询账户寻访记录    | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/gacha.png)     |
 | #方舟签到              | 执行已绑定所有账户签到        | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/signin.png)     |
 | #方舟开启/关闭自动签到 | 每天四点自动执行所有账号签到  | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/autosignin.png) |
 | #方舟理智              | 查询已绑定所有账户实时数据    | ![renderings](https://cdn.jsdelivr.net/gh/erzaozi/skland-plugin/resources/readme/sanity.png)     |

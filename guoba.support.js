@@ -135,7 +135,7 @@ export function supportGuoba() {
           bottomHelpMessage: "给群友绑定Maa功能用的，不需要加端点",
           component: "Input",
           componentProps: {
-            placeholder: '请输入服务地址',
+            placeholder: '请输入服务地址，例：http://39.156.66.10:25087',
           },
         },
         {
