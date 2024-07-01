@@ -197,6 +197,11 @@ class Skland {
                 const bindingList = await this.getBindingList(credResp);
                 return { status: true, grantCode, credResp, bindingList };
             } catch (error) {
+                if (error.response.status === 405) {
+                    return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络" };
+                } else if (error.response.status === 401) {
+                    return { status: false, message: error.response.data.message };
+                }
                 return { status: false, message: '该账号未绑定明日方舟角色' };
             }
         } catch (error) {
