@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import url from 'url';
 import axios from 'axios';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import Config from './Config.js'
 import Render from '../model/render.js'
 
@@ -30,13 +31,14 @@ const CONSTANTS = {
 
 class Skland {
     constructor() {
+        this.proxy = Config.getConfig().proxy_url ? new HttpsProxyAgent(Config.getConfig().proxy_url) : null;
     }
 
     async getTimestamp() {
         let config = await Config.getConfig()
         if (config['skland_use_web_timestamp']) {
             try {
-                const response = await axios.get(CONSTANTS.BINDING_URL);
+                const response = await axios.get(CONSTANTS.BINDING_URL, { httpsAgent: this.proxy });
                 return response.data.timestamp;
             } catch (error) {
                 return error.response.data.timestamp;
@@ -83,7 +85,7 @@ class Skland {
         };
 
         try {
-            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
+            const response = await axios.post(CONSTANTS.GRANT_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE, httpsAgent: this.proxy });
 
             return response.data.data.code;
         } catch (error) {
@@ -96,7 +98,7 @@ class Skland {
         const data = { code: grantCode, kind: 1 };
 
         try {
-            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE });
+            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE, httpsAgent: this.proxy });
 
             return response.data.data;
         } catch (error) {
@@ -111,8 +113,10 @@ class Skland {
         const timestamp = await this.getTimestamp();
         const signedHeaders = await this.getSignHeader(CONSTANTS.BINDING_URL, 'get', null, headers, credResp.token, timestamp);
 
+        console.log(this.proxy);
+
         const response = await axios({
-            method: 'get', url: CONSTANTS.BINDING_URL, headers: signedHeaders,
+            method: 'get', url: CONSTANTS.BINDING_URL, headers: signedHeaders, httpsAgent: this.proxy
         });
 
         const responseData = response.data;
@@ -177,7 +181,7 @@ class Skland {
         let response;
         try {
             response = await axios({
-                method: 'post', url: CONSTANTS.SIGN_URL, headers: signedHeaders, data: data,
+                method: 'post', url: CONSTANTS.SIGN_URL, headers: signedHeaders, data: data, httpsAgent: this.proxy
             });
         } catch (error) {
             if (error.response) {
@@ -198,7 +202,7 @@ class Skland {
                 return { status: true, grantCode, credResp, bindingList };
             } catch (error) {
                 if (error.response.status === 405) {
-                    return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络" };
+                    return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络，或配置代理使用" };
                 } else if (error.response.status === 401) {
                     return { status: false, message: error.response.data.message };
                 }
@@ -259,7 +263,7 @@ class Skland {
         let response;
         try {
             response = await axios({
-                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body, httpsAgent: this.proxy
             });
         } catch (error) {
             if (error.response) {
@@ -304,7 +308,7 @@ class Skland {
         let response;
         try {
             response = await axios({
-                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body, httpsAgent: this.proxy
             });
         } catch (error) {
             if (error.response) {
@@ -341,7 +345,7 @@ class Skland {
         let response;
         try {
             response = await axios({
-                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body,
+                method: 'get', url: CONSTANTS.USER_INFO_URL, headers: signedHeaders, params: body, httpsAgent: this.proxy
             });
         } catch (error) {
             if (error.response) {
@@ -359,7 +363,7 @@ class Skland {
         let response;
         try {
             response = await axios({
-                method: 'get', url: CONSTANTS.GACHA_URL, params: { page: 1, token: token, channelId: type == 1 ? '' : '2' },
+                method: 'get', url: CONSTANTS.GACHA_URL, params: { page: 1, token: token, channelId: type == 1 ? '' : '2' }, httpsAgent: this.proxy
             });
             const data = response.data;
             if (data.code !== 0) {

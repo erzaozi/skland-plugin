@@ -2,6 +2,7 @@ skland_use_web_timestamp: false
 skland_timestamp_delay: 2
 skland_auto_signin_list: []
 skland_auto_push_list: []
+proxy_url: ''
 maa_server_port: 25087
 maa_user_list: []
 maa_public_link: ''

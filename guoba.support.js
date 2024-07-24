@@ -176,6 +176,15 @@ export function supportGuoba() {
           },
         },
         {
+          field: "proxy_url",
+          label: "代理地址",
+          bottomHelpMessage: "当请求被防火墙拦截时可配置此项解决",
+          component: "Input",
+          componentProps: {
+            placeholder: '请输入代理地址，例：http://127.0.0.1:7890',
+          },
+        },
+        {
           field: "skland_use_web_timestamp",
           label: "使用网络时间戳",
           bottomHelpMessage: "签名时获取官网时间戳，而非本地时间戳",
