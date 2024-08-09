@@ -1,6 +1,6 @@
 {
   "name": "skland-plugin",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "基于Yunzai-Bot的明日方舟每日签到，理智提醒插件",
   "main": "index.js",
   "scripts": {

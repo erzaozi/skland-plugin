@@ -209,7 +209,6 @@ class Skland {
                 return { status: false, message: '该账号未绑定明日方舟角色' };
             }
         } catch (error) {
-            console.log(error)
             if (error.response && error.response.status === 401) {
                 return { status: false, message: error.response.data.msg, code: error.response.status };
             } else {
