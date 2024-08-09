@@ -35,12 +35,17 @@ export class Sanity extends plugin {
         let deleteUserId = [];
 
         for (let account of accountList) {
-            const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+            const { status, bindingList, credResp, message, code } = await skland.isAvailable(account.token);
 
             if (!status) {
-                data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：\n${account.uid.join('\n')}\n请重新绑定Token` });
-                deleteUserId.push(account.userId);
-                continue;
+                if (code === 401) {
+                    data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：\n${account.uid.join('\n')}\n请重新绑定Token` });
+                    deleteUserId.push(account.userId);
+                    continue;
+                } else {
+                    data.push({ message: `账号 ${account.userId} 请求失败\n原因：${message}` });
+                    continue;
+                }
             }
 
             let results = [];
@@ -79,12 +84,17 @@ export class Sanity extends plugin {
             let deleteUserId = [];
 
             for (let account of accountList) {
-                const { status, bindingList, credResp } = await skland.isAvailable(account.token);
+                const { status, bindingList, credResp, message, code } = await skland.isAvailable(account.token);
 
                 if (!status) {
-                    data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：\n${account.uid.join('\n')}\n请重新绑定Token` });
-                    deleteUserId.push(account.userId);
-                    continue;
+                    if (code === 401) {
+                        data.push({ message: `账号 ${account.userId} 的Token已失效\n以下UID已被删除：\n${account.uid.join('\n')}\n请重新绑定Token` });
+                        deleteUserId.push(account.userId);
+                        continue;
+                    } else {
+                        data.push({ message: `账号 ${account.userId} 请求失败\n原因：${message}` });
+                        continue;
+                    }
                 }
 
                 const results = await Promise.all(account.uid.map(uid => skland.getSanity(uid, credResp, bindingList)));

@@ -89,7 +89,7 @@ class Skland {
 
             return response.data.data.code;
         } catch (error) {
-            logger.error('获取认证码失败: ', error.response.data.msg);
+            logger.error('获取认证码失败: ', error.response ? error.response.data.msg : error.message);
             throw error;
         }
     }
@@ -102,7 +102,7 @@ class Skland {
 
             return response.data.data;
         } catch (error) {
-            logger.error('获取cred失败：', error.response.data.msg);
+            logger.error('获取cred失败：', error.response ? error.response.data.msg : error.message);
             throw error;
         }
     }
@@ -204,12 +204,17 @@ class Skland {
                 if (error.response.status === 405) {
                     return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络，或配置代理使用" };
                 } else if (error.response.status === 401) {
-                    return { status: false, message: error.response.data.message };
+                    return { status: false, message: error.response.data.message, code: error.response.status };
                 }
                 return { status: false, message: '该账号未绑定明日方舟角色' };
             }
         } catch (error) {
-            return { status: false, message: 'Token已过期' };
+            console.log(error)
+            if (error.response && error.response.status === 401) {
+                return { status: false, message: error.response.data.msg, code: error.response.status };
+            } else {
+                return { status: false, message: error.message, code: error.message };
+            }
         }
     }
 
