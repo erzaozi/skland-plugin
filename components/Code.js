@@ -197,23 +197,20 @@ class Skland {
         try {
             const grantCode = await this.getGrantCode(token);
             const credResp = await this.getCredResp(grantCode);
-            try {
-                const bindingList = await this.getBindingList(credResp);
-                return { status: true, grantCode, credResp, bindingList };
-            } catch (error) {
-                if (error.response.status === 405) {
-                    return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络，或配置代理使用" };
-                } else if (error.response.status === 401) {
-                    return { status: false, message: error.response.data.message, code: error.response.status };
-                }
-                return { status: false, message: '该账号未绑定明日方舟角色' };
-            }
+            const bindingList = await this.getBindingList(credResp);
+
+            return { status: true, grantCode, credResp, bindingList };
         } catch (error) {
-            if (error.response && error.response.status === 401) {
-                return { status: false, message: error.response.data.msg, code: error.response.status };
-            } else {
-                return { status: false, message: error.message, code: error.message };
+            const status = error.response?.status;
+
+            if (status === 405) {
+                return { status: false, message: "当前服务器IP被防火墙拦截，请更换服务器网络，或配置代理使用", code: status };
             }
+            if (status === 401) {
+                return { status: false, message: error.response.data.message || error.response.data.msg, code: status };
+            }
+
+            return { status: false, message: error.message, code: status };
         }
     }
 
