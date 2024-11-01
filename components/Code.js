@@ -1,31 +1,39 @@
 import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs';
 import url from 'url';
 import axios from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import Config from './Config.js'
-import Render from '../model/render.js'
+import { JSDOM } from 'jsdom';
+import { Script } from 'vm';
+import { pluginRoot } from '../model/path.js';
+import Config from './Config.js';
+import Render from '../model/render.js';
 
 const CONSTANTS = {
     APP_CODE: "4ca99fa6b56cc2ba",
     SIGN_URL: "https://zonai.skland.com/api/v1/game/attendance",
     BINDING_URL: "https://zonai.skland.com/api/v1/game/player/binding",
     GRANT_CODE_URL: "https://as.hypergryph.com/user/oauth2/v2/grant",
-    CRED_CODE_URL: "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code",
+    CRED_CODE_URL: "https://zonai.skland.com/web/v1/user/auth/generate_cred_by_code",
     USER_INFO_URL: "https://zonai.skland.com/api/v1/game/player/info",
     CRED_CHECK_URL: "https://zonai.skland.com/api/v1/user/check",
     GACHA_URL: "https://ak.hypergryph.com/user/api/inquiry/gacha",
     REQUEST_HEADERS_BASE: {
-        "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 33; ) Okhttp/4.11.0",
+        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
         "Accept-Encoding": "gzip",
         "Connection": "close",
-        "Origin": "https://www.skland.com",
-        "Referer": "https://www.skland.com/",
-        "Content-Type": "application/json; charset=utf-8",
-        "manufacturer": "Xiaomi",
-        "os": "33",
     },
     SIGN_HEADERS_BASE: {
-        "platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.5.1"
+        "platform": "", "timestamp": "", "dId": "", "vName": ""
+    },
+    SKLAND_SM_CONFIG: {
+        organization: 'UWXspnCCJN4sfYlNfqps',
+        appId: 'default',
+        publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCmxMNr7n8ZeT0tE1R9j/mPixoinPkeM+k4VGIn/s0k7N5rJAfnZ0eMER+QhwFvshzo0LNmeUkpR8uIlU/GEVr8mN28sKmwd2gpygqj0ePnBmOW4v0ZVwbSYK+izkhVFk2V/doLoMbWy6b+UnA8mkjvg0iYWRByfRsK2gdl7llqCwIDAQAB',
+        protocol: 'https',
+        apiHost: 'fp-it.portal101.cn',
+        apiPath: '/deviceprofile/v4',
     }
 };
 
@@ -98,8 +106,7 @@ class Skland {
         const data = { code: grantCode, kind: 1 };
 
         try {
-            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: CONSTANTS.REQUEST_HEADERS_BASE, httpsAgent: this.proxy });
-
+            const response = await axios.post(CONSTANTS.CRED_CODE_URL, data, { headers: { ...CONSTANTS.REQUEST_HEADERS_BASE, ...{ dId: await this.createDeviceId() } }, httpsAgent: this.proxy });
             return response.data.data;
         } catch (error) {
             logger.error('获取cred失败：', error.response ? error.response.data.msg : error.message);
@@ -383,6 +390,30 @@ class Skland {
         } catch (error) {
             return `连接服务器失败：${error.message}`
         }
+    }
+
+    async createDeviceId() {
+        const sdkJsPath = path.resolve(pluginRoot, './utils/fp.min.js');
+        return new Promise((resolve) => {
+            const dom = new JSDOM(
+                '',
+                {
+                    runScripts: 'outside-only',
+                    beforeParse(window) {
+                        window._smReadyFuncs = [
+                            () => {
+                                resolve(window.SMSdk.getDeviceId())
+                            },
+                        ]
+                        window._smConf = CONSTANTS.SKLAND_SM_CONFIG
+                    },
+                },
+            )
+
+            const script = new Script(fs.readFileSync(sdkJsPath, 'utf-8'))
+            const vmContext = dom.getInternalVMContext()
+            script.runInNewContext(vmContext)
+        })
     }
 }
 
